@@ -1,5 +1,5 @@
-const db= require('../config/database-config')
-
+const db = require('../config/database-config')
+const Error = require('../module/error')
 
 const User = function (user) {
     this.id = user.id_user;
@@ -15,7 +15,7 @@ User.get_all = () => {
         try {
             db.query("SELECT * FROM user", function (err, user) {
                 if (err) {
-                    resolve(null);
+                    Error.code1001(res);
                 } else {
                     resolve(user);
                 }
@@ -31,8 +31,7 @@ User.checkPhoneUser = (phone) => {
         try {
             db.query('SELECT * FROM user WHERE sdt_user = ?', phone, (err, res) => {
                 if (err) {
-                    console.log('Error check phone number', err);
-                    result(err, null);
+                    Error.code1001(res);
                 } else {
                     console.log('Check phone number successfully');
                     resolve(res);
@@ -43,16 +42,32 @@ User.checkPhoneUser = (phone) => {
         }
     }));
 };
+User.addUser = (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query("INSERT INTO user SET ?", data, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve({ id: res.insertId, ...data });
+                }
+            })
 
-User.checkgpass_user = (pass) => {
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+
+User.checkPassUser = (pass) => {
     return new Promise((async (resolve, reject) => {
         try {
             db.query('SELECT * FROM user WHERE pass_user = ?', pass, (err, res) => {
                 if (err) {
-                   
-                    result(err, null);
+
+                    Error.code1001(res);
                 } else {
-                   
+
                     resolve(res);
                 }
             })
@@ -61,15 +76,67 @@ User.checkgpass_user = (pass) => {
         }
     }));
 };
+User.updateTokenUser = (idUser, token) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET token='${token}' WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.checkUserByToken = (token) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query('SELECT * FROM user WHERE Token = ?', token, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.checkUserBlock = (idUserA,idUserB) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`SELECT * FROM tbl_blocks WHERE id_blockA = '${idUserA}' AND id_blockB = '${idUserB}' OR id_blockA = '${idUserB}' AND id_blockB = '${idUserA}'`, (err, res) => {
+                if (err) {
+                    resolve(null);
+                } else {
+                    //  console.log('Check phone number successfully');
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+
+
+
+
+
+
+
+// day la o phan chat nen hoi ngu//
 User.checkuserbyid = (id) => {
     return new Promise((async (resolve, reject) => {
         try {
             db.query('SELECT * FROM user WHERE id_user = ?', id, (err, res) => {
                 if (err) {
-                    console.log('Error check phone number', err);
-                    result(err, null);
+                    Error.code1001(res);
                 } else {
-                  //  console.log('Check phone number successfully');
                     resolve(res);
                 }
             })
@@ -85,10 +152,9 @@ User.getlistfriendsbyid = (id) => {
         try {
             db.query(`SELECT * FROM tbl_friend WHERE id_user_a = '${id}' OR id_user_b = '${id}'`, (err, res) => {
                 if (err) {
-                    console.log('Error check phone number', err);
-                    result(err, null);
+                    Error.code1001(res);
                 } else {
-                  //  console.log('Check phone number successfully');
+                    //  console.log('Check phone number successfully');
                     resolve(res);
                 }
             })

@@ -66,7 +66,9 @@
                                         </a>
                                         <div class="chat-about">
                                             <!--Header user chat-->
-                                            <h6 class="m-b-0"><%=friends.pass_user%></h6> <small>Last seen: 2 hours ago</small>
+                                            <h6 class="m-b-0">
+                                                <%=friends.pass_user%>
+                                            </h6> <small>Last seen: 2 hours ago</small>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 hidden-sm text-right">
@@ -122,26 +124,21 @@
                                             <% } else{ %>
                                                 <li class="clearfix">
                                                     <div class="message-data">
-                                                         <!-- <span class="message-data-time">10:12 AM,Today</span>  -->
-                                                           <img src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                                                            alt="avatar"></div>
+                                                        <!-- <span class="message-data-time">10:12 AM,Today</span>  -->
+                                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                                                            alt="avatar">
+                                                    </div>
                                                     <div class="message my-message">
                                                         <%=data.content %>
                                                     </div>
                                                 </li>
-
                                                 <% } %>
-
-
                                                     <% i++; }) %>
                                                         <% } else{ %>
                                                             <P>loi roi ban oi</P>
                                                             <% } %>
-
-
                                 </ul>
                             </div>
-
                             <form id="chat-form" class="msg-text">
                                 <input type="text" id="chat-mes">
                                 <button id="send-chat">GỬi</button>

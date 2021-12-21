@@ -102,7 +102,7 @@ Chat.updataconversation = (id_user_A, id_user_B, list_id_chat) => {
             db.query(`UPDATE tbl_conversation SET list_id_chat='${list_id_chat}' WHERE id_user_A = '${id_user_A}' AND Id_user_B = '${id_user_B}' OR id_user_A = '${id_user_B}' AND Id_user_B = '${id_user_A}'`, (err, res) => {
                 if (err) {
                     console.log('Error check phone number', err);
-                    result(err, null);
+                    result(null);
                 } else {
                     //  console.log('Check phone number successfully');
                     resolve(res);

@@ -6,8 +6,12 @@ const express = require('express')
 const app = express()
 const routes = require('./src/router/web')
 var expressEjsExtend = require("express-ejs-extend");
-app.use(express.static("./src/public"));
+var bodyParser = require('body-parser');
 
+app.use(express.static("./src/public"));
+app.use(bodyParser.urlencoded({ extended:false}));
+app.use(bodyParser.json());
+app.use(express.json());
 
 app.engine("ejs", expressEjsExtend);
 app.set("view engine", "ejs");
