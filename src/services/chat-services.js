@@ -1,4 +1,6 @@
 const chatmodel = require("../models/chat-model")
+const usermodel = require('../models/user-model')
+const UserService = require('../services/user-services')
 let checkconversation = (iduser, idfriend) => {
     return new Promise((async (resolve, reject) => {
         try {
@@ -95,23 +97,83 @@ let updataConversation = (dataconversion) => {
 let getallchatbylistid = (listid) => {
     return new Promise((async (resolve, reject) => {
         try {
-           var allchat=[];
-           var allstidnotphay = listid.split(",");
-           console.log("khi cat dau phau");
-              console.log(allstidnotphay);
-            for (let i = 0; i < allstidnotphay.length-1; i++) {
+            var allchat = [];
+            var allstidnotphay = listid.split(",");
+            console.log("khi cat dau phau");
+            console.log(allstidnotphay);
+            for (let i = 0; i < allstidnotphay.length - 1; i++) {
                 let repdata = await chatmodel.getchatbyid(allstidnotphay[i]);
                 if (repdata.length != 0) {
                     //   console.log(data[0]);
                     allchat.push(repdata[0]);
                 }
                 else {
-                  resolve([]);
+                    resolve([]);
                 }
             }
 
             console.log(allchat);
             resolve(allchat);
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let getListConversationByID = (idUser) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            var listConversation = [];
+
+            let data = await chatmodel.getListConversationByID(idUser);
+
+            if (data != 0) {
+                var ConVerSationNotBlock = data;
+                // console.log(ConVerSationNotBlock)
+                for (let i = 0; i < ConVerSationNotBlock.length; i++) {
+
+                    //     variable = (condition) ? value1: value2;
+                    var checkUserBlockAB = await usermodel.checkUserBlock((ConVerSationNotBlock[i].id_user_A != idUser) ? ConVerSationNotBlock[i].id_user_A : ConVerSationNotBlock[i].Id_user_B, idUser);
+
+                    var check = false;
+                    if (checkUserBlockAB.length != 0) {
+                        if (checkUserBlockAB[0].id != 0) {
+                            // console.log("khogn vao day a");
+                            check = true;
+                        }
+                    }
+                    if (check == false) {
+                        var receiver = await UserService.checkiduser((ConVerSationNotBlock[i].id_user_A != idUser) ? ConVerSationNotBlock[i].id_user_A : ConVerSationNotBlock[i].Id_user_B)
+                        var userReciver = {
+                            "id": receiver.id_user + "",
+                            "username": receiver.name_user,
+                            "avata": receiver.linkavatar_user,
+                        }
+                        var arrListIdMessage = ConVerSationNotBlock[i].list_id_chat.split(",");
+                        var lastmesssage;
+                        let repdata = await chatmodel.getchatbyid(arrListIdMessage[arrListIdMessage.length - 2]);
+                        if (repdata.length != 0) {
+                            lastmesssage = {
+                                "message": repdata[0].content,
+                                "created": repdata[0].create_date,
+                                "unread": "0",
+                            }
+                        }
+                        var dataConVerSation = {
+                            "id": ConVerSationNotBlock[i].id + "",
+                            "parner": userReciver,
+                            "lastmesssage": lastmesssage
+                        }
+
+                        listConversation.push(dataConVerSation);
+                    }
+                }
+
+                resolve(listConversation);
+            }
+            else {
+                resolve(null);
+            }
+
         } catch (e) {
             reject(e);
         }
@@ -123,5 +185,7 @@ module.exports = {
     insertChat: insertChat,
     insertnewConversation: insertnewConversation,
     updataConversation: updataConversation,
-    getallchatbylistid:getallchatbylistid,
+    getallchatbylistid: getallchatbylistid,
+    // duoi la phan api
+    getListConversationByID: getListConversationByID,
 }

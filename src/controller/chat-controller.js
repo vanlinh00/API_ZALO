@@ -1,5 +1,6 @@
 const chatservice = require('../services/chat-services');
 const userservice = require('../services/user-services')
+const Error = require('../module/error')
 
 let initIO = (io) => {
     io.on("connection", function (socket) {
@@ -108,7 +109,29 @@ let sendconversation = async (req, res) => {
 }
 
 let getListConversation = async (req, res) => {
-  
+    var token = req.body.token;
+    var index = req.body.index;
+    var count = req.body.count;
+    if (count <= 0 || count == "" || count == undefined || count == null || index < 0 || index == "" || index == undefined || index == null || token == "" || token == undefined || token == null ) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await userservice.checkUserByToken(token);
+        if (userCheckToken !== null) {
+          var getListConversation= await chatservice.getListConversationByID(userCheckToken.id_user);
+          console.log(getListConversation);
+         //console  console.log("vao cho phan get conversation by id roi");
+         res.send(JSON.stringify({
+            code: "1000",
+            message: 'OK',
+            data: getListConversation,
+            numberNewMessage:""
+        }))
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
 }
 
 

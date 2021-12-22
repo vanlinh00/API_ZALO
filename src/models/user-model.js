@@ -163,4 +163,5 @@ User.getlistfriendsbyid = (id) => {
         }
     }));
 };
+
 module.exports = User;

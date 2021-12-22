@@ -1,5 +1,5 @@
 const db = require('../config/database-config')
-
+const Error = require('../module/error')
 
 const Chat = function (user) {
 
@@ -65,7 +65,7 @@ Chat.getchatbyid = (id) => {
             db.query("SELECT * FROM tbl_chat WHERE id = ?", id, (err, res) => {
                 if (err) {
                     console.log('Error check phone number', err);
-                    result(err, null);
+                    Error.code1001(res);
                 } else {
                     //  console.log('Check phone number successfully');
                     resolve(res);
@@ -115,4 +115,21 @@ Chat.updataconversation = (id_user_A, id_user_B, list_id_chat) => {
     }));
 };
 
+Chat.getListConversationByID = (id) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`SELECT * FROM tbl_conversation  WHERE id_user_A = '${id}' OR Id_user_B = '${id}'`, (err, res) => {
+                if (err) {
+        
+                    Error.code1001(res);
+                } else {
+                    //  console.log('Check phone number successfully');
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 module.exports = Chat;
