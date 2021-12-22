@@ -120,10 +120,25 @@ Chat.getListConversationByID = (id) => {
         try {
             db.query(`SELECT * FROM tbl_conversation  WHERE id_user_A = '${id}' OR Id_user_B = '${id}'`, (err, res) => {
                 if (err) {
-        
+
                     Error.code1001(res);
                 } else {
                     //  console.log('Check phone number successfully');
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+Chat.deleteConversation = (id) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM tbl_conversation WHERE id = '${id}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
                     resolve(res);
                 }
             })

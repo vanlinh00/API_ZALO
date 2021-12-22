@@ -67,4 +67,6 @@ Comment.upDateCommentInTbComment = ( contentPost,idComment) => {
         }
     }));
 };
+
+
 module.exports =Comment;

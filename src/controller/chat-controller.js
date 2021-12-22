@@ -1,7 +1,8 @@
 const chatservice = require('../services/chat-services');
 const userservice = require('../services/user-services')
 const Error = require('../module/error')
-
+const usermodel = require('../models/user-model');
+const con = require('../config/database-config');
 let initIO = (io) => {
     io.on("connection", function (socket) {
         console.log("User connected1111", socket.id);
@@ -112,20 +113,20 @@ let getListConversation = async (req, res) => {
     var token = req.body.token;
     var index = req.body.index;
     var count = req.body.count;
-    if (count <= 0 || count == "" || count == undefined || count == null || index < 0 || index == "" || index == undefined || index == null || token == "" || token == undefined || token == null ) {
+    if (count <= 0 || count == "" || count == undefined || count == null || index < 0 || index == "" || index == undefined || index == null || token == "" || token == undefined || token == null) {
         Error.code1004(res);
     } else {
         var userCheckToken = await userservice.checkUserByToken(token);
         if (userCheckToken !== null) {
-          var getListConversation= await chatservice.getListConversationByID(userCheckToken.id_user);
-          console.log(getListConversation);
-         //console  console.log("vao cho phan get conversation by id roi");
-         res.send(JSON.stringify({
-            code: "1000",
-            message: 'OK',
-            data: getListConversation,
-            numberNewMessage:""
-        }))
+            var getListConversation = await chatservice.getListConversationByID(index, count, userCheckToken.id_user);
+            //  console.log(getListConversation);
+            //console  console.log("vao cho phan get conversation by id roi");
+            res.send(JSON.stringify({
+                code: "1000",
+                message: 'OK',
+                data: getListConversation,
+                numberNewMessage: "0"
+            }))
         }
         else {
             Error.code9998(res);
@@ -133,8 +134,136 @@ let getListConversation = async (req, res) => {
 
     }
 }
+let getconversation = async (req, res) => {
+
+    var token = req.body.token;
+    var partnerId = req.body.partnerId;
+    var conversationId = req.body.conversation;
+    var index = req.body.index;
+    var count = req.body.count;
+    if (conversationId == "" || conversationId == null || conversationId <= 0 || partnerId == null || partnerId <= 0 || partnerId == "" || count <= 0 || count == "" || count == undefined || count == null || index < 0 || index == "" || index == undefined || index == null || token == "" || token == undefined || token == null) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await userservice.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            var conversation = await chatservice.checkconversation(userCheckToken.id_user, partnerId);
+            if (conversation.length != 0) {
+                console.log(conversation[0].list_id_chat);
+                allitemchat = await chatservice.getallchatbylistidofAPI(index, count, conversation[0].list_id_chat);
+
+                var idblock = "0";
+                var checkUserBlockAB = await usermodel.checkUserBlock(partnerId, userCheckToken.id_user);
+                if (checkUserBlockAB.length != 0) {
+                    if (checkUserBlockAB[0].id != 0) {
+                        idblock = "1";
+                        iscomment = "0"
+                    }
+                }
+                res.send(JSON.stringify({
+                    code: "1000",
+                    message: 'OK',
+                    data: {
+                        allitemchat: allitemchat,
+                        "is_blocked": idblock
+                    }
+                }))
+
+            } else {
+                Error.code9994(res);
+            }
 
 
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
+let deletemessage = async (req, res) => {
+    var token = req.body.token;
+    var partnerId = req.body.partnerId;
+    var messageId = req.body.messageId;
+    if (messageId == null || messageId <= 0 || messageId == "" || partnerId == null || partnerId <= 0 || partnerId == "" || token == "" || token == undefined || token == null) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await userservice.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            var conversation = await chatservice.checkconversation(userCheckToken.id_user, partnerId);
+            if (conversation.length != 0) {
+                //  console.log(conversation[0].list_id_chat);
+                var listIdChat = conversation[0].list_id_chat.split(',');
+                var checkMessage = 0;
+                for (let i = 0; i < listIdChat.length; i++) {
+                    if (messageId == listIdChat[i]) {
+                        listIdChat.splice(i, 1);
+                        checkMessage = 1;
+                    }
+                }
+                if (checkMessage == 1) {
+                    var dataConVerSation = {
+                        "id_user_A": userCheckToken.id_user,
+                        "Id_user_B": partnerId,
+                        "list_id_chat": listIdChat.toString(),
+
+                    }
+                    var upDateComveraation = chatservice.updataConversation(dataConVerSation);
+                    if (upDateComveraation.length != 0) {
+                        res.send(JSON.stringify({
+                            code: "1000",
+                            message: 'OK',
+                        }))
+                    }
+                    else {
+                        Error.code9999(res);
+                    }
+                } else {
+                    Error.code9994(res);
+                }
+
+
+            } else {
+                Error.code9994(res);
+            }
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
+let deleteConversation = async (req, res) => {
+    var token = req.body.token;
+    var partnerId = req.body.partnerId;
+
+    if (partnerId == null || partnerId <= 0 || partnerId == "" || token == "" || token == undefined || token == null) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await userservice.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            var conversation = await chatservice.checkconversation(userCheckToken.id_user, partnerId);
+            if (conversation.length != 0) {
+                //   console.log(conversation)
+                var deleleteConversation = await chatservice.deleteConversation(conversation[0].id);
+                if (deleleteConversation != null) {
+                    res.send(JSON.stringify({
+                        code: "1000",
+                        message: 'OK',
+                    }))
+                }
+                else {
+                    Error.code9999(res);
+                }
+            } else {
+                Error.code9994(res);
+            }
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
 module.exports = {
     initIO: initIO,
     chatmain: chatmain,
@@ -142,4 +271,7 @@ module.exports = {
     sendconversation: sendconversation,
     //  api ơ duoi
     getListConversation: getListConversation,
+    getconversation: getconversation,
+    deletemessage: deletemessage,
+    deleteConversation: deleteConversation,
 }

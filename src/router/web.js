@@ -56,7 +56,9 @@ let initWebRouter = function (app) {
 
   // tuan 4 
   app.post('/chat/getlistconversation',chatcontroller.getListConversation);
-  
+  app.post('/chat/getconversation',chatcontroller.getconversation);
+  app.post('/chat/deletemessage',chatcontroller.deletemessage);
+  app.post('/chat/deleteconversation',chatcontroller.deleteConversation);
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);

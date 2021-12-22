@@ -6,7 +6,7 @@ let checkconversation = (iduser, idfriend) => {
         try {
             let data = await chatmodel.checkConversation(iduser, idfriend);
             if (data != 0) {
-                console.log(data[0]);
+               // console.log(data[0]);
                 resolve(data);
             }
             else {
@@ -119,7 +119,7 @@ let getallchatbylistid = (listid) => {
         }
     }));
 }
-let getListConversationByID = (idUser) => {
+let getListConversationByID = (index,count,idUser) => {
     return new Promise((async (resolve, reject) => {
         try {
             var listConversation = [];
@@ -129,7 +129,16 @@ let getListConversationByID = (idUser) => {
             if (data != 0) {
                 var ConVerSationNotBlock = data;
                 // console.log(ConVerSationNotBlock)
-                for (let i = 0; i < ConVerSationNotBlock.length; i++) {
+                if(count>ConVerSationNotBlock.length)
+                {
+                    count=ConVerSationNotBlock.length;
+
+                }
+                if(index>ConVerSationNotBlock.length)
+                {
+                    index=0;
+                }
+                for (let i = index-1; i <count; i++) {
 
                     //     variable = (condition) ? value1: value2;
                     var checkUserBlockAB = await usermodel.checkUserBlock((ConVerSationNotBlock[i].id_user_A != idUser) ? ConVerSationNotBlock[i].id_user_A : ConVerSationNotBlock[i].Id_user_B, idUser);
@@ -137,7 +146,6 @@ let getListConversationByID = (idUser) => {
                     var check = false;
                     if (checkUserBlockAB.length != 0) {
                         if (checkUserBlockAB[0].id != 0) {
-                            // console.log("khogn vao day a");
                             check = true;
                         }
                     }
@@ -179,6 +187,72 @@ let getListConversationByID = (idUser) => {
         }
     }));
 }
+let getallchatbylistidofAPI = async (index,count,listid) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            var allchat = [];
+            var allstidnotphay = listid.split(",");
+            //   console.log("khi cat dau phau");
+            //   console.log(allstidnotphay);
+            if(count>allstidnotphay.length - 1)
+            {
+                count=allstidnotphay.length - 1;
+
+            }
+            if(index>allstidnotphay.length - 1)
+            {
+                index=0;
+            }
+
+            for (let i = index-1; i < count; i++) {
+                let repdata = await chatmodel.getchatbyid(allstidnotphay[i]);
+                if (repdata.length != 0) {
+                    console.log(repdata[0]);
+                    var receiver = await UserService.checkiduser(repdata[0].Id_user_A);
+                    var userReciver = {
+                        "id": receiver.id_user + "",
+                        "username": receiver.name_user,
+                        "avata": receiver.linkavatar_user,
+                    }
+                    var costomConversation = {
+                        "message": repdata[0].content,
+                        "message_id": repdata[0].id + "",
+                        "uread": "1",
+                        "created": repdata[0].create_date,
+                        "sender": userReciver,
+                    }
+                    allchat.push(costomConversation);
+                }
+                else {
+                    resolve([]);
+                }
+            }
+
+            console.log(allchat);
+            resolve(allchat);
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let deleteConversation = (id) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let conversation = await chatmodel.deleteConversation(id);
+        
+            if (conversation.id != 0) {
+                resolve(conversation);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+
+}
+
 module.exports = {
     checkconversation: checkconversation,
     getlastitemsql: getlastitemsql,
@@ -188,4 +262,6 @@ module.exports = {
     getallchatbylistid: getallchatbylistid,
     // duoi la phan api
     getListConversationByID: getListConversationByID,
+    getallchatbylistidofAPI: getallchatbylistidofAPI,
+    deleteConversation:deleteConversation,
 }

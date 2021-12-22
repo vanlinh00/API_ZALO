@@ -152,4 +152,5 @@ Post.deletePost = (id) => {
         }
     }));
 };
+
 module.exports = Post;
