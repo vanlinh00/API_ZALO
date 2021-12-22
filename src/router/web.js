@@ -10,6 +10,7 @@ const chatcontroller = require('../controller/chat-controller')
 const usercontroller = require('../controller/user-controller')
 const postcontroller = require('../controller/post-controller')
 const commentcontroller = require('../controller/comment-controller')
+
 initializePassport(
   passport
 )
@@ -59,6 +60,7 @@ let initWebRouter = function (app) {
   app.post('/chat/getconversation',chatcontroller.getconversation);
   app.post('/chat/deletemessage',chatcontroller.deletemessage);
   app.post('/chat/deleteconversation',chatcontroller.deleteConversation);
+  app.post('/admin/setrole',admincontroller.setRole);
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);

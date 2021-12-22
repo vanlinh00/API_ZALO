@@ -123,7 +123,21 @@ User.checkUserBlock = (idUserA,idUserB) => {
     }));
 };
 
-
+User.upDateRoleUser = (idUser, role) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET role='${role}' WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 
 
 

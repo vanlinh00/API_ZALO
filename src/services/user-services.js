@@ -179,6 +179,26 @@ let listfriendsbyid = (id) => {
         }
     }));
 }
+let upDateRoleUser=async(idUser,role)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.upDateRoleUser(idUser, role);
+            if (user != null && user != undefined) {
+                if (user.length != 0) {
+                    resolve(user[0]);
+                }
+                else {
+                    resolve(null);
+                }
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = {
     getalluser: getalluser,
     checkphoneuser: checkphoneuser,
@@ -189,4 +209,5 @@ module.exports = {
     checkPassUser: checkPassUser,
     updateTokenUser: updateTokenUser,
     checkUserByToken: checkUserByToken,
+    upDateRoleUser:upDateRoleUser,
 }
