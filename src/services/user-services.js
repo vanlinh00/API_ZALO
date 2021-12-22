@@ -199,6 +199,40 @@ let upDateRoleUser=async(idUser,role)=>{
         }
     }));
 }
+let upDateActiveUser=async(idUser,isactive)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.upDateActiveUser(idUser, isactive);
+            if (user != null && user != undefined) {
+               
+                    resolve(true);
+               
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let deleteUser= async(idUser)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.deleteUser(idUser);
+            console.log("vao den vervices");
+            console.log(user);
+            // if (user.id != 0) {
+            //     resolve(user);
+            // }
+            // else {
+            //     resolve(null);
+            // }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = {
     getalluser: getalluser,
     checkphoneuser: checkphoneuser,
@@ -210,4 +244,6 @@ module.exports = {
     updateTokenUser: updateTokenUser,
     checkUserByToken: checkUserByToken,
     upDateRoleUser:upDateRoleUser,
+    upDateActiveUser:upDateActiveUser,
+    deleteUser:deleteUser,
 }

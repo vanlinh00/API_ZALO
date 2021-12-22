@@ -139,8 +139,39 @@ User.upDateRoleUser = (idUser, role) => {
     }));
 };
 
+User.upDateActiveUser = (idUser, isactive) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET isactive='${isactive}' WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 
 
+User.deleteUser = (id) => {
+
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM user WHERE id_user = '${id}'`, (err, res) => {
+                if (err) {
+                    console.log('tai sao loi o day');
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 
 
 // day la o phan chat nen hoi ngu//

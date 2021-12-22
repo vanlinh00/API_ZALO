@@ -5,7 +5,7 @@ const Friends = function (user) {
 
 }
 // friends
-Friends.getlistfriendsbyid = (id) => {
+Friends.getfriendsbyid = (id) => {
     return new Promise((async (resolve, reject) => {
         try {
             db.query(`SELECT * FROM tbl_friend WHERE id_user_a = '${id}' OR id_user_b = '${id}'`, (err, res) => {
@@ -21,3 +21,4 @@ Friends.getlistfriendsbyid = (id) => {
         }
     }));
 };
+module.exports =Friends;

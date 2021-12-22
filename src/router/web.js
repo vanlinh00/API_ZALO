@@ -10,6 +10,7 @@ const chatcontroller = require('../controller/chat-controller')
 const usercontroller = require('../controller/user-controller')
 const postcontroller = require('../controller/post-controller')
 const commentcontroller = require('../controller/comment-controller')
+const  friendscontroller = require('../controller/friends-controller')
 
 initializePassport(
   passport
@@ -61,6 +62,12 @@ let initWebRouter = function (app) {
   app.post('/chat/deletemessage',chatcontroller.deletemessage);
   app.post('/chat/deleteconversation',chatcontroller.deleteConversation);
   app.post('/admin/setrole',admincontroller.setRole);
+
+  // tuan 5
+  app.post('/friend/get_user_friends',friendscontroller.getUserFrineds);
+  app.post('/admin/setsersate',admincontroller.setSersate);
+  app.post('/admin/deleteuser',admincontroller.deleteUser);
+
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
