@@ -34,4 +34,37 @@ Comment.addComment = (data) => {
         }
     }));
 };
+Comment.deleteComment = ( id) => {
+    
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM tbl_comment WHERE id = '${id}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+
+Comment.upDateCommentInTbComment = ( contentPost,idComment) => {
+    
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE tbl_comment SET content_cm='${contentPost}' WHERE id = '${idComment}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 module.exports =Comment;

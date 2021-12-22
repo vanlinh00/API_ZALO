@@ -262,6 +262,7 @@ let deletePost = async (req, res) => {
     }
 
 }
+// cai report  nay chua lam
 let reportPost = async (req, res) => {
     var token = req.body.token;
     var id_post = req.body.id;
@@ -291,7 +292,62 @@ let reportPost = async (req, res) => {
 
     }
 }
+let addLike = async (req, res) => {
+    var token = req.body.token;
+    var id_post = req.body.id;
 
+    if (token == "" || token == undefined || token == null || id_post == undefined || id_post == "" || id_post <= 0 || id_post == null) {
+        Error.code1004(res);
+
+    } else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            var postCheckId = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
+            if (postCheckId !== null) {
+                if (postCheckId.idblock == "0") {
+                    var listIdUserLike = postCheckId.id_list_user_like;
+                    var arrayIdUserLike = postCheckId.id_list_user_like.split(",");
+
+                    var checkUserLike = 0;
+                    for (let i = 0; i < arrayIdUserLike.length - 1; i++) {
+                        if (arrayIdUserLike[i] == userCheckToken.id_user) {
+                            arrayIdUserLike.splice(i, 1);
+                            checkUserLike = 1;
+                        }
+                    }
+                    if (checkUserLike == 0) {
+                        listIdUserLike = listIdUserLike + userCheckToken.id_user + ",";
+                    } else {
+                        listIdUserLike = arrayIdUserLike.toString();
+                    }
+                  //  console.log(listIdUserLike);
+
+                    var upDateLike = await PostService.upDateLike(listIdUserLike,id_post);
+                    if (upDateLike != null) {
+                        var postCheckIdUpDate = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
+                        res.send(JSON.stringify({
+                            Code: "1000",
+                            Message: 'OK',
+                            Data: postCheckIdUpDate.id_list_user_like.split(",").length - 1,
+                        }))
+                    }else{
+                        Error.code9999(res);
+                    }
+
+                } else {
+                    Error.code9992(res);
+                }
+            }
+            else {
+                Error.code9992(res);
+            }
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
 module.exports = {
     addPost: addPost,
     getPost: getPost,
@@ -300,5 +356,6 @@ module.exports = {
     edit_post: edit_post,
     deletePost: deletePost,
     reportPost: reportPost,
+    addLike: addLike,
 
 }

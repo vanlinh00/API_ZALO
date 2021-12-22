@@ -184,7 +184,7 @@ let deletePost = (id) => {
     }));
 
 }
-let checkPostByIdofComment = (idPost, idUser) => {
+let checkPostByIdBase = (idPost, idUser) => {
     return new Promise((async (resolve, reject) => {
         try {
             let post = await postmodel.checkPostByid(idPost);
@@ -230,7 +230,25 @@ let UpDateComment=async(listIDComment, idPost)=> {
     return new Promise((async (resolve, reject) => {
         try {
             let post = await postmodel.UpDateComment(listIDComment, idPost);
-            console.log(post);
+           // console.log(post);
+            if (post != null) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
+            }
+
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+
+let upDateLike=async(listIdLike, idPost)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let post = await postmodel.upDateLike(listIdLike, idPost);
+           // console.log(post);
             if (post != null) {
                 resolve(true);
             }
@@ -251,7 +269,8 @@ module.exports = {
     getFirstItem: getFirstItem,
     upDatePost: upDatePost,
     deletePost: deletePost,
-    checkPostByIdofComment: checkPostByIdofComment,
+    checkPostByIdBase: checkPostByIdBase,
     UpDateComment: UpDateComment,
+    upDateLike:upDateLike,
 
 }

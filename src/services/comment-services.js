@@ -53,7 +53,43 @@ let addComment = (newDataUser) => {
         }
     }));
 }
+let deleteComment = (id) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let comment = await commentMode.deleteComment(id);
+            console.log(comment);
+            if (comment.id != 0) {
+                resolve(comment);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+
+}
+let upDateCommentInTbComment = (contenComment,idComment) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let comment = await commentMode.upDateCommentInTbComment(contenComment, idComment);
+            console.log(comment);
+            if (comment != null) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
+            }
+
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = {
     getCommentById: getCommentById,
     addComment:addComment,
+    deleteComment:deleteComment,
+    upDateCommentInTbComment:upDateCommentInTbComment,
 }

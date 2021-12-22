@@ -1,5 +1,6 @@
 const chatservice = require('../services/chat-services');
 const userservice = require('../services/user-services')
+
 let initIO = (io) => {
     io.on("connection", function (socket) {
         console.log("User connected1111", socket.id);
@@ -106,9 +107,16 @@ let sendconversation = async (req, res) => {
     console(req.body.msg)
 }
 
+let getListConversation = async (req, res) => {
+  
+}
+
+
 module.exports = {
     initIO: initIO,
     chatmain: chatmain,
     conversation: conversation,
     sendconversation: sendconversation,
+    //  api ơ duoi
+    getListConversation: getListConversation,
 }

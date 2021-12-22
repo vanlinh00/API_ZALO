@@ -50,6 +50,13 @@ let initWebRouter = function (app) {
   app.post('/post/report_post',postcontroller.reportPost);
   app.post('/comment/get_comment', commentcontroller.getComment);
   app.post('/comment/add_comment', commentcontroller.addComment);
+  app.post('/comment/delete_comment', commentcontroller.deleteComment);
+  app.post('/comment/edit_comment', commentcontroller.editComment)
+  app.post('/post/like/adlike', postcontroller.addLike);
+
+  // tuan 4 
+  app.post('/chat/getlistconversation',chatcontroller.getListConversation);
+  
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
