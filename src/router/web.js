@@ -49,6 +49,7 @@ let initWebRouter = function (app) {
   // tuan 3
   app.post('/post/report_post',postcontroller.reportPost);
   app.post('/comment/get_comment', commentcontroller.getComment);
+  app.post('/comment/add_comment', commentcontroller.addComment);
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);

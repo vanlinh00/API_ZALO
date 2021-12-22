@@ -18,4 +18,20 @@ Comment.getCommentById = (id) => {
         }
     }));
 };
+Comment.addComment = (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query("INSERT INTO tbl_comment SET ?", data, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve({ id: res.insertId, ...data });
+                }
+            })
+
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 module.exports =Comment;

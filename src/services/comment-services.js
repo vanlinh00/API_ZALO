@@ -19,8 +19,8 @@ let getCommentById = async (idComment) => {
                 
                 var datacomment = {
                         "id": comment[0].id,
-                        "comment": comment[0].content_post,
-                        "crated": seconds,
+                        "comment": comment[0].content_cm,
+                        "crated": comment[0].createdate_cm,
                         "poster": poster,
                     }
                     resolve(datacomment);
@@ -37,7 +37,23 @@ let getCommentById = async (idComment) => {
     }));
 
 }
+let addComment = (newDataUser) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let comment = await commentMode.addComment(newDataUser);
+            console.log(comment);
+            if (comment.id != 0) {
+                resolve(comment);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = {
     getCommentById: getCommentById,
-
+    addComment:addComment,
 }

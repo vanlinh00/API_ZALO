@@ -104,6 +104,22 @@ Post.upDatePost = (content_post, id) => {
         }
     }));
 };
+Post.UpDateComment = (id_list_user_cm, id) => {
+    
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE tbl_post SET id_list_user_cm='${id_list_user_cm}' WHERE id = '${id}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 
 Post.deletePost = ( id) => {
     

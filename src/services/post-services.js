@@ -187,7 +187,6 @@ let deletePost = (id) => {
 let checkPostByIdofComment = (idPost, idUser) => {
     return new Promise((async (resolve, reject) => {
         try {
-
             let post = await postmodel.checkPostByid(idPost);
             console.log(post);
             if (post != null && post != undefined) {
@@ -202,14 +201,14 @@ let checkPostByIdofComment = (idPost, idUser) => {
 
                     var datapost = {
                         id: post[0].id,
-                        id_user:post[0].id_user,
-                        content_post:post[0].content_post,
+                        id_user: post[0].id_user,
+                        content_post: post[0].content_post,
                         media: post[0].media,
                         id_list_user_cm: post[0].id_list_user_cm,
                         id_list_user_like: post[0].id_list_user_like,
-                        date_create:post[0].date_create ,
+                        date_create: post[0].date_create,
                         url_post: post[0].url_post,
-                        idblock:idblock,
+                        idblock: idblock,
                     }
 
                     resolve(datapost);
@@ -227,6 +226,23 @@ let checkPostByIdofComment = (idPost, idUser) => {
     }));
 
 }
+let UpDateComment=async(listIDComment, idPost)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let post = await postmodel.UpDateComment(listIDComment, idPost);
+            console.log(post);
+            if (post != null) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
+            }
+
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = {
     addPost: addPost,
     checkPostById: checkPostById,
@@ -236,5 +252,6 @@ module.exports = {
     upDatePost: upDatePost,
     deletePost: deletePost,
     checkPostByIdofComment: checkPostByIdofComment,
+    UpDateComment: UpDateComment,
 
 }
