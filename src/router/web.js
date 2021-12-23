@@ -68,6 +68,12 @@ let initWebRouter = function (app) {
   app.post('/admin/setsersate',admincontroller.setSersate);
   app.post('/admin/deleteuser',admincontroller.deleteUser);
   app.post('/admin/getbasicuserinfo',admincontroller.getBasicUserInfo);
+  
+  //tuan 6
+  app.post('/friend/set_request_friend',friendscontroller.setRquestFriend);
+  app.post('/friend/get_requested_friend',friendscontroller.getRquestFriend);
+  app.post('/friend/set_accept_friend',friendscontroller.setAcceptFriend);
+  
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
