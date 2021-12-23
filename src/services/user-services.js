@@ -220,14 +220,14 @@ let deleteUser= async(idUser)=>{
     return new Promise((async (resolve, reject) => {
         try {
             let user = await usermodel.deleteUser(idUser);
-            console.log("vao den vervices");
-            console.log(user);
-            // if (user.id != 0) {
-            //     resolve(user);
-            // }
-            // else {
-            //     resolve(null);
-            // }
+          //  console.log("vao den vervices");
+          //  console.log(user);
+            if (user!=null) {
+                resolve(true);
+            }
+            else {
+                resolve(null);
+            }
         } catch (e) {
             reject(e);
         }

@@ -131,44 +131,44 @@ let deleteUser = async (req, res) => {
     Error.code1004(res);
   }
   else {
-    var deleteUser = await userservice.deleteUser(userId);
-    // var userCheckToken = await userservice.checkUserByToken(token);
-    // if (userCheckToken !== null) {
-    //   if (userCheckToken.role == '2') {
-    //     var userActive = await userservice.checkiduser(userId);
-    //     console.log(userActive);
-    //     if (userActive !== null) {
-    //       if (userActive.role != "2" && userActive.role != "1") {
-    //         console.log("vao den day chua"+userId);
+    var userCheckToken = await userservice.checkUserByToken(token);
+    if (userCheckToken !== null) {
+      if (userCheckToken.role == '2') {
+        var userActive = await userservice.checkiduser(userId);
+        console.log(userActive);
+        if (userActive !== null) {
+          if (userActive.role != "2" && userActive.role != "1") {
+            console.log("vao den day chua"+userId);
 
-    //         var deleteUser = await userservice.deleteUser(userId);
-    //         if (deleteUser != undefined) {
+           // var deleteUser = await userservice.deleteUser(userId);
+            // xoa bai viet 
+            // xoa comment 
+            // xoa chat
+            // xoa conversation
+            // xoa all
+           
 
-    //           res.send(JSON.stringify({
-    //             code: "1000",
-    //             message: 'OK'
-    //           }))
+              res.send(JSON.stringify({
+                code: "1000",
+                message: 'OK'
+              }))
 
-    //         } else {
-    //           Error.code9995(res);
-    //         }
+          }
+          else {
+            Error.code1009(res);
+          }
+        }
+        else {
+          Error.code9995(res);
+        }
+      } else {
+        Error.code9997(res);
+      }
 
-    //       }
-    //       else {
-    //         Error.code1009(res);
-    //       }
-    //     }
-    //     else {
-    //       Error.code9995(res);
-    //     }
-    //   } else {
-    //     Error.code9997(res);
-    //   }
-
-    // }
-    // else {
-    //   Error.code9998(res);
-    // }
+    }
+    else {
+      Error.code9998(res);
+    }
 
   }
 }

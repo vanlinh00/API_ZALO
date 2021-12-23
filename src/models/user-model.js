@@ -157,6 +157,7 @@ User.upDateActiveUser = (idUser, isactive) => {
 
 
 User.deleteUser = (id) => {
+    console.log(id);
 
     return new Promise((async (resolve, reject) => {
         try {

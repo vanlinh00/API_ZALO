@@ -67,7 +67,7 @@ let initWebRouter = function (app) {
   app.post('/friend/get_user_friends',friendscontroller.getUserFrineds);
   app.post('/admin/setsersate',admincontroller.setSersate);
   app.post('/admin/deleteuser',admincontroller.deleteUser);
-
+  //app.post('/admin/')
 
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
