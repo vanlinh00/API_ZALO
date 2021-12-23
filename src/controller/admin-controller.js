@@ -138,24 +138,65 @@ let deleteUser = async (req, res) => {
         console.log(userActive);
         if (userActive !== null) {
           if (userActive.role != "2" && userActive.role != "1") {
-            console.log("vao den day chua"+userId);
+            console.log("vao den day chua" + userId);
 
-           // var deleteUser = await userservice.deleteUser(userId);
+            // var deleteUser = await userservice.deleteUser(userId);
             // xoa bai viet 
             // xoa comment 
             // xoa chat
             // xoa conversation
             // xoa all
-           
 
-              res.send(JSON.stringify({
-                code: "1000",
-                message: 'OK'
-              }))
+
+            res.send(JSON.stringify({
+              code: "1000",
+              message: 'OK'
+            }))
 
           }
           else {
             Error.code1009(res);
+          }
+        }
+        else {
+          Error.code9995(res);
+        }
+      } else {
+        Error.code9997(res);
+      }
+
+    }
+    else {
+      Error.code9998(res);
+    }
+
+  }
+}
+let getBasicUserInfo = async (req, res) => {
+  token = req.body.token;
+  role = req.body.role;
+  userId = req.body.userId;
+
+  //console.log(req.body);
+  if (role == null || role == undefined || token == null || token == undefined || token == "" || userId == null || userId == undefined || userId <= 0) {
+    Error.code1004(res);
+  }
+  else {
+    var userCheckToken = await userservice.checkUserByToken(token);
+    if (userCheckToken !== null) {
+      if (userCheckToken.role == role||userCheckToken.role == "2") {
+        var userActive = await userservice.adminCheckUser(userId);
+        console.log(userActive);
+        if (userActive !== null) {
+          if (userActive.role != 2) {
+            res.send(JSON.stringify({
+              code: "1000",
+              message: 'OK',
+              data: userActive
+            }))
+          }
+          else {
+            Error.code9997(res);
           }
         }
         else {
@@ -180,4 +221,5 @@ module.exports = {
   setRole: setRole,
   setSersate: setSersate,
   deleteUser: deleteUser,
+  getBasicUserInfo: getBasicUserInfo,
 }

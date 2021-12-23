@@ -1,5 +1,5 @@
 const usermodel = require('../models/user-model')
-
+const friendService = require('../services/friends-services')
 // tuan 1 
 let getalluser = () => {
     return new Promise((async (resolve, reject) => {
@@ -128,6 +128,7 @@ let checkiduser = (id) => {
     }));
 }
 
+
 let getlistuserbyid = (listid) => {
     return new Promise((async (resolve, reject) => {
         try {
@@ -233,6 +234,36 @@ let deleteUser= async(idUser)=>{
         }
     }));
 }
+let adminCheckUser = async (id) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let data = await usermodel.checkuserbyid(id);
+            if (data != 0) {
+           //     console.log(data[0]);
+               var friendOfUser= await friendService.getlistfriendsbyid(id);
+
+                var user={
+                    "user_id":data[0].id_user+"",
+                    "user_name":data[0].name_user,
+                    "address":"",
+                    "onlline":data[0].online+"",
+                    "isActive":data[0].isactive+"",
+                    "image":data[0].linkavatar_user,
+                    "friend_count":(friendOfUser!=null)?friendOfUser.length:0+"",
+                    "phonenumber":data[0].sdt_user+"",
+                    "email":"",
+                  }
+                  resolve(user);
+
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = {
     getalluser: getalluser,
     checkphoneuser: checkphoneuser,
@@ -246,4 +277,5 @@ module.exports = {
     upDateRoleUser:upDateRoleUser,
     upDateActiveUser:upDateActiveUser,
     deleteUser:deleteUser,
+    adminCheckUser:adminCheckUser,
 }
