@@ -5,7 +5,7 @@ var jwt = require('jsonwebtoken');
 
 let sigup = async (rep, res) => {
     console.log(rep.body);
-  
+
     var phoneNumber = rep.body.sdt_user;
     var passWord = rep.body.pass_user;
 
@@ -19,8 +19,8 @@ let sigup = async (rep, res) => {
         if (user == null) {
             var newDataUser = rep.body;
             var newUser = await UserService.addUser(newDataUser);
-           // console.log("loi la");
-           // console.log(newUser);
+            // console.log("loi la");
+            // console.log(newUser);
             if (newUser.sdt_user != null) {
                 res.send(JSON.stringify({
                     Code: "1000",
@@ -94,7 +94,7 @@ let logout = async (rep, res) => {
             //   console.log(userUpdate);
             res.send(JSON.stringify({
                 code: "1000",
-                Message: 'ok',
+                message: 'ok',
                 // Data: userUpdate,
             }));
         }
@@ -103,9 +103,151 @@ let logout = async (rep, res) => {
         Error.code9998(res);
     }
 }
+let setBlockUser = async (req, res) => {
+    token = req.body.token;
+    userId = req.body.userId;
 
+    type = req.body.type;
+    if (userId == undefined || userId == "" || userId == null || userId <= 0 || type < 0 || type > 1 || type == undefined || token == "" || token == undefined || token == null) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            var checkUserId = await UserService.checkiduser(userId);
+            if (checkUserId != undefined && userId != userCheckToken.id_user) {
+                var checkUserABlockUserB = await UserService.checkBlockUserAB(userId, userCheckToken.id_user);
+                if (checkUserABlockUserB == undefined) {
+                    var checkUserBBlockUserA = await UserService.checkBlockUserAB(userCheckToken.id_user, userId);
+                    if (checkUserBBlockUserA != undefined) {
+                        if (type == 1) {
+                            var deleteBlockUser = await UserService.deleteBlockUser(checkUserBBlockUserA.id)
+                        } else {
+                            Error.code9997(res);
+                        }
+                    } else {
+                        if (type == 0) {
+                            var block = {
+                                "id_blockA": userCheckToken.id_user,
+                                "id_blockB": userId,
+                            }
+                            var addBlcockUser = await UserService.addBlockUser(block);
+                        } else {
+                            Error.code9997(res);
+                        }
+                    }
+                    res.send(JSON.stringify({
+                        code: "1000",
+                        message: 'ok',
+                        // Data: userUpdate,
+                    }));
+
+                } else {
+                    Error.code9997(res);
+                }
+            }
+            else {
+                Error.code9995(res);
+            }
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
+let setBlockDiary = async (req, res) => {
+
+}
+let getVerifyCode = async (req, res) => {
+    var phoneNumber = req.body.phoneNumber;
+    if (phoneNumber === null || phoneNumber === '') {
+        Error.code1002(res);
+    }
+    else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0') {
+        console.log(phoneNumber.length);
+        Error.code1004(res);
+    }
+    else {
+        var user = await UserService.checkphoneuser(phoneNumber);
+        if (user !== null) {
+            if (user.sdt_user == phoneNumber) {
+
+                var code = Math.floor(Math.random() * 200) + 1000;
+                var dataCodeVrify = {
+                    "phomenumber": phoneNumber,
+                    "code": code,
+                }
+                var checkPhoneUserinCodeVrify = await UserService.checkPhoneUserinCodeVrify(phoneNumber);
+             //   console.log(checkPhoneUserinCodeVrify);
+                if (checkPhoneUserinCodeVrify != null) {
+                    var updateCode = await UserService.updateCode(phoneNumber, code);
+                  console.log(updateCode)
+                } else {
+                    var addCodeVrify = await UserService.addCodeVrify(dataCodeVrify);
+                    console.log(addCodeVrify)
+                }
+                res.send(JSON.stringify({
+                    code: "1000",
+                    message: 'ok',
+                    data: code
+                }));
+            }
+        }
+        else {
+            Error.code9995(res);
+        }
+    }
+}
+let checkVerifyCode = async (req, res) => {
+    var phoneNumber = req.body.phoneNumber;
+    var codeverify = req.body.codeverify;
+    if (phoneNumber === null || phoneNumber === '' || codeverify == "") {
+        Error.code1002(res);
+    }
+    else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0' || codeverify.length != 4) {
+        console.log(phoneNumber.length);
+        Error.code1004(res);
+    }
+    else {
+        var user = await UserService.checkphoneuser(phoneNumber);
+        if (user !== null) {
+            if (user.sdt_user == phoneNumber) {
+
+                var checkPhoneUserinCodeVrify = await UserService.checkPhoneUserinCodeVrify(phoneNumber);
+                console.log(checkPhoneUserinCodeVrify);
+                if (checkPhoneUserinCodeVrify != null && checkPhoneUserinCodeVrify.code == codeverify) {
+                    var updateCode = await UserService.updateCode(phoneNumber, "");
+                    //    console.log(updateCode)
+                    var datauser={
+                        "token":user.token,
+                        "id":user.id_user,
+                        "active":user.isactive,
+                    }
+                    res.send(JSON.stringify({
+                        code: "1000",
+                        message: 'ok',
+                        data: datauser
+                    }));
+                   
+                } else {
+                    //  var addCodeVrify = await UserService.addCodeVrify(dataCodeVrify);
+                    //  console.log(addCodeVrify)
+                    Error.code1005(res);
+                }
+
+            }
+        }
+        else {
+            Error.code9995(res);
+        }
+    }
+}
 module.exports = {
     sigup: sigup,
     login: login,
     logout: logout,
+    setBlockUser: setBlockUser,
+    setBlockDiary: setBlockDiary,
+    getVerifyCode: getVerifyCode,
+    checkVerifyCode: checkVerifyCode,
 }

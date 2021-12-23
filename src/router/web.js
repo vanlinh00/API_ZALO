@@ -74,7 +74,11 @@ let initWebRouter = function (app) {
   app.post('/friend/get_requested_friend',friendscontroller.getRquestFriend);
   app.post('/friend/set_accept_friend',friendscontroller.setAcceptFriend);
   
-
+  // tuan 7
+  app.post('/user/setblockuser',usercontroller.setBlockUser);
+  app.post('/user/setblockdiary',usercontroller.setBlockDiary);
+  app.post('/user/getverifycode',usercontroller.getVerifyCode);
+  app.post('/user/checkverifycode',usercontroller.checkVerifyCode);
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
   app.post('/admin/login', checkNotAuthenticatedAdmin, passport.authenticate('local', {

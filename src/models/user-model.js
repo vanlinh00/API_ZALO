@@ -26,6 +26,7 @@ User.get_all = () => {
     }));
 };
 
+//User
 User.checkPhoneUser = (phone) => {
     return new Promise((async (resolve, reject) => {
         try {
@@ -58,7 +59,6 @@ User.addUser = (data) => {
         }
     }));
 };
-
 User.checkPassUser = (pass) => {
     return new Promise((async (resolve, reject) => {
         try {
@@ -106,6 +106,102 @@ User.checkUserByToken = (token) => {
         }
     }));
 };
+User.upDateRoleUser = (idUser, role) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET role='${role}' WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.upDateActiveUser = (idUser, isactive) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET isactive='${isactive}' WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.deleteUser = (id) => {
+    //console.log(id);
+
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM user WHERE id_user = '${id}'`, (err, res) => {
+                if (err) {
+                    console.log('tai sao loi o day');
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+
+// block
+User.deleteBlockUser=(id)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM tbl_blocks WHERE id = '${id}'`, (err, res) => {
+                if (err) {
+                    console.log('tai sao loi o day');
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+User.addBlockUser = (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query("INSERT INTO tbl_blocks SET ?", data, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve({ id: res.insertId, ...data });
+                }
+            })
+
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.checkBlockUserAB=(idUserA, idUserB)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`SELECT * FROM tbl_blocks WHERE id_blockA = '${idUserA}' AND id_blockB = '${idUserB}'`, (err, res) => {
+                if (err) {
+                    resolve(null);
+                } else {
+                    //  console.log('Check phone number successfully');
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 User.checkUserBlock = (idUserA,idUserB) => {
     return new Promise((async (resolve, reject) => {
         try {
@@ -123,10 +219,27 @@ User.checkUserBlock = (idUserA,idUserB) => {
     }));
 };
 
-User.upDateRoleUser = (idUser, role) => {
+//tbl_codevrify
+User.addCodeVrify = (data) => {
     return new Promise((async (resolve, reject) => {
         try {
-            db.query(`UPDATE user SET role='${role}' WHERE id_user = '${idUser}'`, (err, res) => {
+            db.query("INSERT INTO tbl_codevrify SET ?", data, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve({ id: res.insertId, ...data });
+                }
+            })
+
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.checkPhoneUserinCodeVrify=(phoneNumber)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query('SELECT * FROM tbl_codevrify WHERE phomenumber = ?', phoneNumber, (err, res) => {
                 if (err) {
                     Error.code1001(res);
                 } else {
@@ -137,12 +250,11 @@ User.upDateRoleUser = (idUser, role) => {
             reject(e);
         }
     }));
-};
-
-User.upDateActiveUser = (idUser, isactive) => {
+}
+User.updateCode=(phoneNumber,code)=>{
     return new Promise((async (resolve, reject) => {
         try {
-            db.query(`UPDATE user SET isactive='${isactive}' WHERE id_user = '${idUser}'`, (err, res) => {
+            db.query(`UPDATE tbl_codevrify SET code='${code}' WHERE phomenumber = '${phoneNumber}'`, (err, res) => {
                 if (err) {
                     Error.code1001(res);
                 } else {
@@ -153,28 +265,7 @@ User.upDateActiveUser = (idUser, isactive) => {
             reject(e);
         }
     }));
-};
-
-
-User.deleteUser = (id) => {
-    console.log(id);
-
-    return new Promise((async (resolve, reject) => {
-        try {
-            db.query(`DELETE FROM user WHERE id_user = '${id}'`, (err, res) => {
-                if (err) {
-                    console.log('tai sao loi o day');
-                } else {
-                    resolve(res);
-                }
-            })
-        } catch (e) {
-            reject(e);
-        }
-    }));
-};
-
-
+}
 // day la o phan chat nen hoi ngu//
 User.checkuserbyid = (id) => {
     return new Promise((async (resolve, reject) => {

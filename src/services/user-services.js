@@ -128,7 +128,110 @@ let checkiduser = (id) => {
     }));
 }
 
+let checkBlockUserAB=(idUserA,idUserB)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let data = await usermodel.checkBlockUserAB(idUserA,idUserB);
+            if (data != 0) {
+                //     console.log(data[0]);
+                resolve(data[0]);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
 
+}
+let deleteBlockUser=(id) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let block = await usermodel.deleteBlockUser(id);
+          //  console.log("vao den vervices");
+          //  console.log(user);
+            if (block!=null) {
+                resolve(true);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let addBlockUser=(data)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.addBlockUser(data);
+          //  console.log(user);
+            if (user.id != 0) {
+                resolve(user);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+
+let addCodeVrify=(data)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let codephonenumber = await usermodel.addCodeVrify(data);
+          //  console.log(user);
+            if (codephonenumber.id != 0) {
+                resolve(codephonenumber);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let checkPhoneUserinCodeVrify=(phoneNumber)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.checkPhoneUserinCodeVrify(phoneNumber);
+            //  console.log(user);
+            if (user != null && user != undefined) {
+                if (user.length != 0) {
+                    resolve(user[0]);
+                }
+                else {
+                    resolve(null);
+                }
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let updateCode=(phoneNumber,code)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.updateCode(phoneNumber, code);
+           // console.log(user);
+            if (user.changedRows == 1) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 let getlistuserbyid = (listid) => {
     return new Promise((async (resolve, reject) => {
         try {
@@ -278,4 +381,10 @@ module.exports = {
     upDateActiveUser:upDateActiveUser,
     deleteUser:deleteUser,
     adminCheckUser:adminCheckUser,
+    checkBlockUserAB:checkBlockUserAB,
+    deleteBlockUser:deleteBlockUser,
+    addBlockUser:addBlockUser,
+    addCodeVrify: addCodeVrify,
+    checkPhoneUserinCodeVrify:checkPhoneUserinCodeVrify,
+    updateCode:updateCode,
 }
