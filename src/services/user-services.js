@@ -52,10 +52,10 @@ let addUser = (newDataUser) => {
         }
     }));
 }
-let checkPassUser = (passUser) => {
+let checkPassUser = (phoneNumber,passUser) => {
     return new Promise((async (resolve, reject) => {
         try {
-            let user = await usermodel.checkPassUser(passUser);
+            let user = await usermodel.checkPassUser(phoneNumber,passUser);
 
             console.log(user);
             if (user != null && user != undefined) {
@@ -121,6 +121,38 @@ let checkiduser = (id) => {
             }
             else {
                 resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let updatePassWorkUser = (idUser, passWord) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.updatePassWorkUser(idUser, passWord);
+           // console.log(user);
+            if (user.changedRows == 1) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let updateInformationUser = (idUser, passWord) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let user = await usermodel.updateInformationUser(idUser, passWord);
+           // console.log(user);
+            if (user.changedRows == 1) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
             }
         } catch (e) {
             reject(e);
@@ -387,4 +419,6 @@ module.exports = {
     addCodeVrify: addCodeVrify,
     checkPhoneUserinCodeVrify:checkPhoneUserinCodeVrify,
     updateCode:updateCode,
+    updatePassWorkUser:updatePassWorkUser,
+    updateInformationUser:updateInformationUser,
 }

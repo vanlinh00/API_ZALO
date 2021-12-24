@@ -59,10 +59,10 @@ User.addUser = (data) => {
         }
     }));
 };
-User.checkPassUser = (pass) => {
+User.checkPassUser = (phoneNumber,pass) => {
     return new Promise((async (resolve, reject) => {
         try {
-            db.query('SELECT * FROM user WHERE pass_user = ?', pass, (err, res) => {
+            db.query(`SELECT * FROM user WHERE pass_user ='${pass}' AND sdt_user ='${phoneNumber}'`, (err, res) => {
                 if (err) {
 
                     Error.code1001(res);
@@ -153,6 +153,38 @@ User.deleteUser = (id) => {
         }
     }));
 };
+User.updatePassWorkUser = (idUser, passWord) => {
+  //  console.log(idUser+passWord);
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET pass_user='${passWord}' WHERE sdt_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+User.updateInformationUser = (username,described,avatar,address,cover_image,idUser) => {
+    //  console.log(idUser+passWord);
+      return new Promise((async (resolve, reject) => {
+          try {
+              db.query(`UPDATE user SET pass_user='${passWord}' WHERE sdt_user = '${idUser}'`, (err, res) => {
+                  if (err) {
+                      Error.code1001(res);
+                  } else {
+                      resolve(res);
+                  }
+              })
+          } catch (e) {
+              reject(e);
+          }
+      }));
+  };
 
 // block
 User.deleteBlockUser=(id)=> {

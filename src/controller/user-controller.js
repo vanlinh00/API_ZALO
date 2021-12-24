@@ -51,7 +51,7 @@ let login = async (rep, res) => {
         var user = await UserService.checkphoneuser(phoneNumber);
         if (user !== null) {
             if (user.sdt_user == phoneNumber) {
-                var userCheckPass = await UserService.checkPassUser(passWord);
+                var userCheckPass = await UserService.checkPassUser(phoneNumber, passWord);
                 if (userCheckPass !== null) {
                     //if dung tao token va hien dang nhap thanh con
                     const accessToken = jwt.sign({
@@ -73,7 +73,7 @@ let login = async (rep, res) => {
                     //console.log(accessToken);
 
                 } else {
-                    Error.code9995(res);
+                    Error.code1004(res);
                 }
 
             }
@@ -178,10 +178,10 @@ let getVerifyCode = async (req, res) => {
                     "code": code,
                 }
                 var checkPhoneUserinCodeVrify = await UserService.checkPhoneUserinCodeVrify(phoneNumber);
-             //   console.log(checkPhoneUserinCodeVrify);
+                //   console.log(checkPhoneUserinCodeVrify);
                 if (checkPhoneUserinCodeVrify != null) {
                     var updateCode = await UserService.updateCode(phoneNumber, code);
-                  console.log(updateCode)
+                    console.log(updateCode)
                 } else {
                     var addCodeVrify = await UserService.addCodeVrify(dataCodeVrify);
                     console.log(addCodeVrify)
@@ -218,17 +218,17 @@ let checkVerifyCode = async (req, res) => {
                 if (checkPhoneUserinCodeVrify != null && checkPhoneUserinCodeVrify.code == codeverify) {
                     var updateCode = await UserService.updateCode(phoneNumber, "");
                     //    console.log(updateCode)
-                    var datauser={
-                        "token":user.token,
-                        "id":user.id_user,
-                        "active":user.isactive,
+                    var datauser = {
+                        "token": user.token,
+                        "id": user.id_user,
+                        "active": user.isactive,
                     }
                     res.send(JSON.stringify({
                         code: "1000",
                         message: 'ok',
                         data: datauser
                     }));
-                   
+
                 } else {
                     //  var addCodeVrify = await UserService.addCodeVrify(dataCodeVrify);
                     //  console.log(addCodeVrify)
@@ -242,6 +242,101 @@ let checkVerifyCode = async (req, res) => {
         }
     }
 }
+let changePassword = async (req, res) => {
+    var token = req.body.token;
+    var passWord = req.body.passWord;
+
+    var newpassWord = req.body.newpassWord;
+    if (passWord === null || passWord === '' || newpassWord === null || newpassWord === '') {
+        Error.code1002(res);
+    }
+    else if (passWord.length > 10 || passWord.length < 6 || newpassWord.length > 10 || newpassWord.length < 6) {
+
+        Error.code1004(res);
+    }
+    else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+
+            var userCheckPass = await UserService.checkPassUser(userCheckToken.sdt_user, passWord);
+            if (userCheckPass !== null) {
+
+                var result = passWord.localeCompare(newpassWord);
+                if (result === 0) {
+                    Error.code1004(res);
+                } else {
+                    var upDatePassWork = await UserService.updatePassWorkUser(userCheckToken.sdt_user, newpassWord)
+                    if (upDatePassWork !== null) {
+                        res.send(JSON.stringify({
+                            code: "1000",
+                            message: "ok",
+                        }));
+                    } else {
+                        Error.code9999(res);
+                    }
+
+                }
+
+            } else {
+                Error.code1004(res);
+            }
+
+
+        }
+        else {
+            Error.code9998(res);
+        }
+    }
+
+    // check token
+    // check password cua dung
+    // check password hop ly khong gan khong dai ko chua ky tu dac biet và same old passeword
+    //
+
+}
+let setUserInfo = async (req, res) => {
+    var token = req.body.token;
+    var username = req.body.username;
+    var described = req.body.described;
+    var avatar = req.body.avatar;
+    var address = req.body.address;
+    // var city = req.body.city;
+    //  var country = req.body.country;
+    var cover_image = req.body.cover_image;
+    // var link = req.body.link;
+    if (username.length < 40 || described.length < 150 || link == "" || link == undefined || cover_image === undefined || cover_image === '' || address === null || address === undefined || avatar == "" || avatar == undefined || token == "" || token == undefined || username == "" || username == undefined || described == "" || described == undefined) {
+        Error.code1002(res);
+    }
+    else {
+        var infor = {
+            "token": "",
+            "username": "",
+            "described": "",
+            "avatar": "",
+            "address": "",
+            //  "city": "",
+            //     "country": "",
+            "cover_image": "",
+            // "link": "",
+        }
+        var outPut = {
+            "avatar": "",
+            "cover_image": "",
+            "link": "",
+            "country": "",
+        }
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            // can phai xua
+            // updateInformationUser
+            //   var userCheckToken = await UserService.updateInformationUser(data);
+        }
+        else {
+            Error.code9998(res);
+        }
+    }
+
+}
 module.exports = {
     sigup: sigup,
     login: login,
@@ -250,4 +345,6 @@ module.exports = {
     setBlockDiary: setBlockDiary,
     getVerifyCode: getVerifyCode,
     checkVerifyCode: checkVerifyCode,
+    changePassword: changePassword,
+    setUserInfo: setUserInfo,
 }

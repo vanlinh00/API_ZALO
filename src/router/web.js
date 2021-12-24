@@ -79,6 +79,11 @@ let initWebRouter = function (app) {
   app.post('/user/setblockdiary',usercontroller.setBlockDiary);
   app.post('/user/getverifycode',usercontroller.getVerifyCode);
   app.post('/user/checkverifycode',usercontroller.checkVerifyCode);
+  
+  // tuan 8
+  app.post('/user/changepassword',usercontroller.changePassword);
+  app.post('/user/setuserinfo',usercontroller.setUserInfo);
+
 
   app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
   app.post('/admin/login', checkNotAuthenticatedAdmin, passport.authenticate('local', {
