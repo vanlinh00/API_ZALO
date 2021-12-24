@@ -6,7 +6,7 @@ let addPost = async (req, res) => {
     var content = req.body.described;
     console.log(req.file);
 
-    if (content.length >= 200 || content.length == 0 || token.length == 0 || token == undefined || content == undefined) {
+    if (content.length >= 200 || content.length == 0 || token.length == 0 || token == undefined) {
         Error.code1002(res);
     }
     else {
@@ -25,7 +25,7 @@ let addPost = async (req, res) => {
                 media: "link media",
                 id_list_user_like: "0",
                 id_list_user_cm: "0",
-                // date_create: seconds,
+                date_create: seconds,
                 // token_post: accessToken,
             }
             var newPost = await PostService.addPost(DataNewPost);
@@ -51,7 +51,7 @@ let getPost = async (req, res) => {
     var id_post = req.body.id_post;
     var token = req.body.token;
 
-    if (token.length == 0 || token == undefined || id_post == null || token == null) {
+    if (token == "" || token == undefined || id_post == null || id_post == undefined || token == null) {
         Error.code1002(res);
     }
     else {
@@ -112,9 +112,9 @@ let getListPost = async (req, res) => {
                 lastId = listPostIndexTo[listPostIndexTo.length - 1].id + "";
             }
             res.send(JSON.stringify({
-                Code: "1000",
-                Message: 'OK',
-                Data: listPost,
+                code: "1000",
+                message: 'OK',
+                data: listPost,
                 "NewItems": newItem,
                 "LastID": lastId,
             }))
@@ -166,7 +166,7 @@ let getNewItem = async (req, res) => {
                 Code: "1000",
                 Message: 'OK',
                 Data: listPost,
-                "NewItems": newItem,
+                "NewItems": newItem+ "",
                 "LastID": listId,
             }))
         }
@@ -191,7 +191,6 @@ let edit_post = async (req, res) => {
             if (userCheckToken !== null) {
                 var postCheckId = await PostService.checkPostById(id_post, userCheckToken.id_user);
                 if (postCheckId !== null) {
-
                     if (postCheckId.can_edit != 0) {
 
                         var upDatePost = await PostService.upDatePost(described, id_post);
@@ -320,9 +319,9 @@ let addLike = async (req, res) => {
                     } else {
                         listIdUserLike = arrayIdUserLike.toString();
                     }
-                  //  console.log(listIdUserLike);
+                    //  console.log(listIdUserLike);
 
-                    var upDateLike = await PostService.upDateLike(listIdUserLike,id_post);
+                    var upDateLike = await PostService.upDateLike(listIdUserLike, id_post);
                     if (upDateLike != null) {
                         var postCheckIdUpDate = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
                         res.send(JSON.stringify({
@@ -330,7 +329,7 @@ let addLike = async (req, res) => {
                             Message: 'OK',
                             Data: postCheckIdUpDate.id_list_user_like.split(",").length - 1,
                         }))
-                    }else{
+                    } else {
                         Error.code9999(res);
                     }
 

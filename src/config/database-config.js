@@ -6,7 +6,7 @@ var con = mysql.createConnection({
   password: "",
   database: "api"
 });
-
+//
 con.connect(function(err) {
   if (err){
     console.log("not connect");

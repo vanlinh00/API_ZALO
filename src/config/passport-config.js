@@ -1,5 +1,5 @@
 const LocalStrategy = require('passport-local').Strategy
-//const bcrypt = require('bcrypt')
+//const bcrypt = require('bcrypt')1
 const UserService  = require('../services/user-services')
 
 function initialize(passport) {

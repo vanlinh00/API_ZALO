@@ -1,13 +1,8 @@
-exports.code1004= (res)=> {
-    res.send(JSON.stringify({
-      code: "1004",
-      message: 'Parameter value is invalid'
-    }));
-}
+
 exports.code9992= (res)=> {
     res.send(JSON.stringify({
       code: "9992",
-      message: 'Post is no existed'
+      message: 'Post is not existed'
     }));
 }
 exports.code9993= (res)=> {
@@ -69,7 +64,7 @@ exports.code1001=(res)=> {
 exports.code1002=(res)=> {
     res.send(JSON.stringify({
       code: "1002",
-      message: 'Parameter is not enought'
+      message: 'Parameter is not enough'
     }));
 }
 

@@ -86,22 +86,29 @@ let login = async (rep, res) => {
 let logout = async (rep, res) => {
     var token = rep.body.token;
     var userCheckToken = await UserService.checkUserByToken(token);
-    if (userCheckToken != null) {
-        var userUpdateToken = await UserService.updateTokenUser(userCheckToken.id_user, "");
-        if (userUpdateToken != null) {
-            //  var userUpdate = await UserService.checkphoneuser(userCheckToken.sdt_user);
-            //   console.log("update token ok");
-            //   console.log(userUpdate);
-            res.send(JSON.stringify({
-                code: "1000",
-                message: 'ok',
-                // Data: userUpdate,
-            }));
+    if(token == "" ||token==null || token==undefined)
+    {
+        Error.code1004(res);
+
+    }else{
+        if (userCheckToken != null) {
+            var userUpdateToken = await UserService.updateTokenUser(userCheckToken.id_user, "");
+            if (userUpdateToken != null) {
+                //  var userUpdate = await UserService.checkphoneuser(userCheckToken.sdt_user);
+                //   console.log("update token ok");
+                //   console.log(userUpdate);
+                res.send(JSON.stringify({
+                    code: "1000",
+                    message: 'ok',
+                    // Data: userUpdate,
+                }));
+            }
+        }
+        else {
+            Error.code9998(res);
         }
     }
-    else {
-        Error.code9998(res);
-    }
+  
 }
 let setBlockUser = async (req, res) => {
     token = req.body.token;
@@ -114,6 +121,9 @@ let setBlockUser = async (req, res) => {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
             var checkUserId = await UserService.checkiduser(userId);
+
+            console.log("id can block"+userId);
+            console.log("id nguoi  block"+ userCheckToken.id_user);
             if (checkUserId != undefined && userId != userCheckToken.id_user) {
                 var checkUserABlockUserB = await UserService.checkBlockUserAB(userId, userCheckToken.id_user);
                 if (checkUserABlockUserB == undefined) {
