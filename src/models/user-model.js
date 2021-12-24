@@ -169,11 +169,11 @@ User.updatePassWorkUser = (idUser, passWord) => {
         }
     }));
 };
-User.updateInformationUser = (username,described,avatar,address,cover_image,idUser) => {
-    //  console.log(idUser+passWord);
+User.updateInformationUser = (username,described,avatar,address,phone) => {
+    
       return new Promise((async (resolve, reject) => {
           try {
-              db.query(`UPDATE user SET pass_user='${passWord}' WHERE sdt_user = '${idUser}'`, (err, res) => {
+              db.query(`UPDATE user SET name_user='${username}', described='${described}', linkavatar_user='${avatar}', address='${address}' WHERE sdt_user = '${phone}'`, (err, res) => {
                   if (err) {
                       Error.code1001(res);
                   } else {

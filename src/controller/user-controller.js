@@ -300,36 +300,34 @@ let setUserInfo = async (req, res) => {
     var described = req.body.described;
     var avatar = req.body.avatar;
     var address = req.body.address;
+
+   // var cover_image = req.body.cover_image;
+    // var link = req.body.link;
     // var city = req.body.city;
     //  var country = req.body.country;
-    var cover_image = req.body.cover_image;
-    // var link = req.body.link;
-    if (username.length < 40 || described.length < 150 || link == "" || link == undefined || cover_image === undefined || cover_image === '' || address === null || address === undefined || avatar == "" || avatar == undefined || token == "" || token == undefined || username == "" || username == undefined || described == "" || described == undefined) {
+    if (username.length > 40 || described.length > 150 ||  address === null || address === undefined || avatar == "" || avatar == undefined || token == "" || token == undefined || username == "" || username == undefined || described == "" || described == undefined) {
         Error.code1002(res);
     }
     else {
-        var infor = {
-            "token": "",
-            "username": "",
-            "described": "",
-            "avatar": "",
-            "address": "",
-            //  "city": "",
-            //     "country": "",
-            "cover_image": "",
-            // "link": "",
-        }
-        var outPut = {
-            "avatar": "",
-            "cover_image": "",
-            "link": "",
-            "country": "",
-        }
+    
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
-            // can phai xua
-            // updateInformationUser
-            //   var userCheckToken = await UserService.updateInformationUser(data);
+            var userUpdateInformation = await UserService.updateInformationUser(username, described, avatar, address, userCheckToken.sdt_user);
+            if (userUpdateInformation !== null) {
+                var outPut = {
+                    "username": username,
+                    "avatar": avatar,
+                    //"cover_image": "",
+                    // "link": "",
+                    // "country": "",
+                    "address": address
+                }
+                res.send(JSON.stringify({
+                    code: "1000",
+                    message: "ok",
+                    data: outPut,
+                }));
+            }
         }
         else {
             Error.code9998(res);

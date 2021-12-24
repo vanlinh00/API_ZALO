@@ -143,10 +143,10 @@ let updatePassWorkUser = (idUser, passWord) => {
         }
     }));
 }
-let updateInformationUser = (idUser, passWord) => {
+let updateInformationUser = (username,described,avatar,address,phone) => {
     return new Promise((async (resolve, reject) => {
         try {
-            let user = await usermodel.updateInformationUser(idUser, passWord);
+            let user = await usermodel.updateInformationUser(username,described,avatar,address,phone);
            // console.log(user);
             if (user.changedRows == 1) {
                 resolve(true);
