@@ -108,6 +108,9 @@
 
                                         <% if(data.Id_user_A==iduser){ %>
 
+                                      
+
+                                            
                                             <li class="clearfix">
                                                 <div class="message-data text-right">
                                                     <!-- <span class="message-data-time">10:10 AM,
@@ -120,8 +123,8 @@
                                                 </div>
                                             </li>
 
-
                                             <% } else{ %>
+
                                                 <li class="clearfix">
                                                     <div class="message-data">
                                                         <!-- <span class="message-data-time">10:12 AM,Today</span>  -->
@@ -132,11 +135,17 @@
                                                         <%=data.content %>
                                                     </div>
                                                 </li>
+    
+
+    
                                                 <% } %>
                                                     <% i++; }) %>
                                                         <% } else{ %>
                                                             <P>loi roi ban oi</P>
                                                             <% } %>
+
+
+
                                 </ul>
                             </div>
                             <form id="chat-form" class="msg-text">

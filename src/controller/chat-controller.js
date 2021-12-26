@@ -63,10 +63,11 @@ let chatmain = async (req, res) => {
     }
 
     //console.log(listfriends);
-    res.render('mainchat.ejs', {
-        name: req.user.id_user,
-        listfriends: listuser
-    })
+    // res.render('mainchat.ejs', {
+    //     name: req.user.id_user,
+    //     listfriends: listuser
+    // })
+    res.render('chat/chatmain.ejs',{listfriends:listuser,  name: req.user.id_user,});
 
 }
 
@@ -96,7 +97,15 @@ let conversation = async (req, res) => {
         idroom = data.id + 1;
     }
     //console.log(listfriends);
-    res.render('chat2user.ejs', {
+    // res.render('chat2user.ejs', {
+    //     iduser: req.user.id_user,
+    //     idfriend: req.query.id,
+    //     listfriends: listuser,
+    //     idroom: idroom,
+    //     allitemchat: allitemchat,
+    //     friends: friends,
+    // })
+      res.render('chat/conversation2user.ejs', {
         iduser: req.user.id_user,
         idfriend: req.query.id,
         listfriends: listuser,
