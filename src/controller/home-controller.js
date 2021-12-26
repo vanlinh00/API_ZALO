@@ -1,5 +1,5 @@
 let login = async (req, res) => {
-  res.render('login.ejs');
+  res.render('loginchat.ejs');
 }
 module.exports = {
   login: login,
