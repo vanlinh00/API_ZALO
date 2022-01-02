@@ -54,20 +54,26 @@ let initIO = (io) => {
 }
 let chatmain = async (req, res) => {
 
-    var listidfriends = await userservice.listfriendsbyid(req.user.id_user);
-    var listuser;
-    if (listidfriends == null) {
-        listuser = [];
+    if (req.user.role == 2) {
+        var listuser = await userservice.getalluser();
+        res.render('admin/trangchu.ejs')
     } else {
-        listuser = await userservice.getlistuserbyid(listidfriends);
+        var listidfriends = await userservice.listfriendsbyid(req.user.id_user);
+        var listuser;
+        if (listidfriends == null) {
+            listuser = [];
+        } else {
+            listuser = await userservice.getlistuserbyid(listidfriends);
+        }
+
+        //console.log(listfriends);
+        // res.render('mainchat.ejs', {
+        //     name: req.user.id_user,
+        //     listfriends: listuser
+        // })
+        res.render('chat/chatmain.ejs', { listfriends: listuser, name: req.user.id_user, });
     }
 
-    //console.log(listfriends);
-    // res.render('mainchat.ejs', {
-    //     name: req.user.id_user,
-    //     listfriends: listuser
-    // })
-    res.render('chat/chatmain.ejs',{listfriends:listuser,  name: req.user.id_user,});
 
 }
 
@@ -105,7 +111,7 @@ let conversation = async (req, res) => {
     //     allitemchat: allitemchat,
     //     friends: friends,
     // })
-      res.render('chat/conversation2user.ejs', {
+    res.render('chat/conversation2user.ejs', {
         iduser: req.user.id_user,
         idfriend: req.query.id,
         listfriends: listuser,

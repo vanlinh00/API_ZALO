@@ -169,4 +169,37 @@ Post.getListPostWithBetween=(lastId,lastIdDatabase) => {
         }
     }));
 };
+
+
+Post.reportPost = (idPost,idUser) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`SELECT * FROM tbl_report WHERE id_post ='${idPost}' AND id_user ='${idUser}' AND is_report='${0}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+Post.addReportPost = (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query("INSERT INTO tbl_report SET ?", data, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve({ id: res.insertId, ...data });
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+
 module.exports = Post;

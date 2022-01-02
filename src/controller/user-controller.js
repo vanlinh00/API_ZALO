@@ -19,6 +19,7 @@ let sigup = async (rep, res) => {
                 "name_user": "User",
                 "sdt_user": rep.body.sdt_user,
                 "pass_user": rep.body.pass_user,
+                "linkuser":rep.body.sdt_user+"/url"
             }
             var newUser = await UserService.addUser(newDataUser);
             if (newUser.sdt_user != null) {
@@ -89,8 +90,8 @@ let logout = async (rep, res) => {
 
     } else {
         if (userCheckToken != null) {
-            var date= new Date();
-            var userUpdateToken = await UserService.updateTokenUser(userCheckToken.id_user, "",date.getTime());
+            var date = new Date();
+            var userUpdateToken = await UserService.updateTokenUser(userCheckToken.id_user, "", date.getTime());
             if (userUpdateToken != null) {
                 res.send(JSON.stringify({
                     code: "1000",
@@ -106,7 +107,7 @@ let logout = async (rep, res) => {
 
 }
 
-let setBlockUser = async (req, res) => {
+let setBlockDiary = async (req, res) => {
     token = req.body.token;
     userId = req.body.userId;
 
@@ -120,15 +121,19 @@ let setBlockUser = async (req, res) => {
 
             console.log("id can block" + userId);
             console.log("id nguoi  block" + userCheckToken.id_user);
-            if (checkUserId != undefined && userId != userCheckToken.id_user) {
+            if (checkUserId != undefined) {
                 var checkUserABlockUserB = await UserService.checkBlockUserAB(userId, userCheckToken.id_user);
-                if (checkUserABlockUserB == undefined) {
+                
+                if (checkUserABlockUserB == undefined && userId != userCheckToken.id_user) {
                     var checkUserBBlockUserA = await UserService.checkBlockUserAB(userCheckToken.id_user, userId);
+                    var check = 0;
                     if (checkUserBBlockUserA != undefined) {
                         if (type == 1) {
                             var deleteBlockUser = await UserService.deleteBlockUser(checkUserBBlockUserA.id)
                         } else {
+                            check = 1;
                             Error.code9997(res);
+
                         }
                     } else {
                         if (type == 0) {
@@ -138,15 +143,17 @@ let setBlockUser = async (req, res) => {
                             }
                             var addBlcockUser = await UserService.addBlockUser(block);
                         } else {
+                            check = 1;
                             Error.code9997(res);
                         }
                     }
-                    res.send(JSON.stringify({
-                        code: "1000",
-                        message: 'ok',
-                        // Data: userUpdate,
-                    }));
-
+                    if (check == 0) {
+                        res.send(JSON.stringify({
+                            code: "1000",
+                            message: 'ok',
+                            // Data: userUpdate,
+                        }));
+                    }
                 } else {
                     Error.code9997(res);
                 }
@@ -161,7 +168,7 @@ let setBlockUser = async (req, res) => {
 
     }
 }
-let setBlockDiary = async (req, res) => {
+let setBlockUser = async (req, res) => {
 
 }
 let getVerifyCode = async (req, res) => {
@@ -195,7 +202,7 @@ let getVerifyCode = async (req, res) => {
                 res.send(JSON.stringify({
                     code: "1000",
                     message: 'ok',
-                    data: code
+                    data: code+""
                 }));
             }
         }
@@ -232,7 +239,7 @@ let checkVerifyCode = async (req, res) => {
                     res.send(JSON.stringify({
                         code: "1000",
                         message: 'ok',
-                        data: datauser
+                        data: datauser+""
                     }));
 
                 } else {

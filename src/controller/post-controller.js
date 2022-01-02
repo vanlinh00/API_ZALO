@@ -1,6 +1,7 @@
 const Error = require('../module/error');
 const UserService = require('../services/user-services')
 const PostService = require('../services/post-services')
+const CommentService = require('../services/comment-services')
 
 let addPost = async (req, res) => {
     var token = req.body.token;
@@ -133,7 +134,7 @@ let getListPost = async (req, res) => {
     var token = req.body.token;
     var index = req.body.index;
     var last_id = req.body.last_id;
-    console.log(last_id)
+
     //var idFirstTbPost = await PostService.getFirstItem();
 
     if (/*index - idFirstTbPost.id < 0 ||*/ count == '' || index == '' || count == null || index == null || index == undefined) {
@@ -148,23 +149,34 @@ let getListPost = async (req, res) => {
             var listPostIndexTo = await PostService.getListPost(index, count);
             var listPost = []
             var newItem = "0";
-            for (let i = 0; i < listPostIndexTo.length; i++) {
-                var postCheckId = await PostService.checkPostById(listPostIndexTo[i].id, userCheckToken.id_user);
-                listPost.push(postCheckId);
-                if (listPostIndexTo[i].id == last_id) {
-                    if (listPostIndexTo.length - 1 - i > 0) {
-                        newItem = listPostIndexTo.length-1 - i;
+
+            if (listPostIndexTo.length > 0) {
+                for (let i = 0; i < listPostIndexTo.length; i++) {
+                    var postCheckId = await PostService.checkPostById(listPostIndexTo[i].id, userCheckToken.id_user);
+                    listPost.push(postCheckId);
+
+                    if (listPostIndexTo[i].id == last_id) {
+                        if (listPostIndexTo.length - 1 - i > 0) {
+                            newItem = listPostIndexTo.length - 1 - i;
+                        }
+
+                    }
+                }
+                var lastId = last_id;
+                if (listPostIndexTo.length != 0) {
+                    if (listPostIndexTo[0].id > lastId) {
+                        console.log("id sau tien ");
+                        console.log(listPostIndexTo[0].id);
+
+                        var checkNeuItem = await PostService.getListPostWithBetween(lastId, listPostIndexTo[0].id);
+                        newItem = checkNeuItem.length - 1 + listPostIndexTo.length - 1;
                     }
 
+                    lastId = listPostIndexTo[listPostIndexTo.length - 1].id + "";
                 }
+
             }
-            var lastId = last_id;
-            if (listPostIndexTo.length != 0) {
-                lastId = listPostIndexTo[listPostIndexTo.length - 1].id + "";
-                // if (listPostIndexTo[listPostIndexTo.length - 1].id - last_id > 0) {
-                //     newItem = listPostIndexTo[listPostIndexTo.length - 1].id - last_id + "";
-                // }
-            }
+
             res.send(JSON.stringify({
                 code: "1000",
                 message: 'OK',
@@ -182,10 +194,13 @@ let getNewItem = async (req, res) => {
     var last_id = req.body.last_id;
     var category_id = req.body.category_id;
     var token = req.body.token;
+    var idFirstTbPost = await PostService.getFirstItem();
+    var getLastIdTbPost = await PostService.getLastItem();
+
     if (category_id == "" || category_id == null || category_id == undefined) {
         category_id = 0;
     }
-    if (last_id == "" || last_id == null || last_id == undefined ) {
+    if (last_id == "" || last_id == null || last_id == undefined || getLastIdTbPost.id < last_id || last_id - idFirstTbPost.id < 0) {
         Error.code1004(res);
     }
     else {
@@ -193,29 +208,29 @@ let getNewItem = async (req, res) => {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
 
-            var listPostIndexTo = await PostService.getListPostWithBetween(last_id, idLastTbPost.id );
+            var listPostIndexTo = await PostService.getListPostWithBetween(last_id, idLastTbPost.id);
             var listPost = []
             var newItem = "0";
             for (let i = 0; i < listPostIndexTo.length; i++) {
                 var postCheckId = await PostService.checkPostById(listPostIndexTo[i].id, userCheckToken.id_user);
                 listPost.push(postCheckId);
-                if(listPostIndexTo[i].id==last_id)
-                {
-                    newItem=listPostIndexTo.length-1-i;
+                if (listPostIndexTo[i].id == last_id) {
+                    newItem = listPostIndexTo.length - 1 - i;
                 }
             }
-  
+
             res.send(JSON.stringify({
                 code: "1000",
                 message: 'OK',
                 data: listPost,
                 "NewItems": newItem + "",
-                "LastID":listPostIndexTo[listPostIndexTo.length-1].id,
+                "LastID": listPostIndexTo[listPostIndexTo.length - 1].id,
             }))
         }
         else {
             Error.code9998(res);
         }
+
     }
 }
 let edit_post = async (req, res) => {
@@ -223,11 +238,11 @@ let edit_post = async (req, res) => {
     var id_post = req.body.id;
     var described = req.body.described;
     var image = req.body.image;
-    if (token == "" || token == undefined || token == null || id_post == undefined || id_post == "" || id_post <= 0 || id_post == null) {
+    if (described == null || described == undefined || token == "" || token == undefined || token == null || id_post == undefined || id_post == "" || id_post <= 0 || id_post == null) {
         Error.code1004(res);
     }
     else {
-        if (described.length >= 200 || described == "" || described == null || described == undefined || image.length >= 200 || image == undefined || image == null) {
+        if (described.length >= 200 || described == "") {
             Error.code1002(res);
         } else {
             var userCheckToken = await UserService.checkUserByToken(token);
@@ -237,10 +252,8 @@ let edit_post = async (req, res) => {
                     if (postCheckId.can_edit != 0) {
 
                         var upDatePost = await PostService.upDatePost(described, id_post);
-                        console.log(upDatePost);
                         if (upDatePost == true) {
-                            var newPost = await PostService.checkPostById(id_post);
-
+                            var newPost = await PostService.checkPostById(id_post, userCheckToken.id_user);
                             res.send(JSON.stringify({
                                 Code: "1000",
                                 Message: 'OK',
@@ -273,17 +286,24 @@ let deletePost = async (req, res) => {
     else {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
-            var postCheckId = await PostService.checkPostById(id_post, userCheckToken.id_user);
+            var postCheckId = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
             if (postCheckId !== null) {
 
                 if (postCheckId.can_edit != 0) {
 
                     var postDelete = await PostService.deletePost(id_post);
 
+                    var listIdCommet = postCheckId.id_list_user_cm.split(",");
+
+                    for (let i = 0; i < listIdCommet.length; i++) {
+                        var deleteComment = await CommentService.deleteComment(listIdCommet[i]);
+                    }
+
+                    // còn xóa comment id comment nữa
                     if (postDelete != null) {
                         res.send(JSON.stringify({
-                            Code: "1000",
-                            Message: 'OK',
+                            code: "1000",
+                            message: 'OK',
                         }))
                     } else {
                         Error.code9999(res);
@@ -304,13 +324,13 @@ let deletePost = async (req, res) => {
     }
 
 }
-// cai report  nay chua lam
+
 let reportPost = async (req, res) => {
     var token = req.body.token;
     var id_post = req.body.id;
     var subject = req.body.subject;
     var details = req.body.details;
-    console.log(subject);
+    //   console.log(subject);
     if (subject < 0 || details == "" || details == undefined || details == null || token == "" || token == undefined || token == null || id_post == undefined || id_post == "" || id_post <= 0 || id_post == null) {
         Error.code1004(res);
     } else {
@@ -318,11 +338,26 @@ let reportPost = async (req, res) => {
         if (userCheckToken !== null) {
             var postCheckId = await PostService.checkPostById(id_post, userCheckToken.id_user);
             if (postCheckId !== null) {
-                res.send(JSON.stringify({
-                    Code: "1000",
-                    Message: 'OK',
-                    Data: postCheckId,
-                }))
+
+                var checkUserReportPost = await PostService.reportPost(id_post, userCheckToken.id_user);
+                if (checkUserReportPost == false && postCheckId.can_edit != 1) {
+                    var dataRepost = {
+                        "id_post": id_post,
+                        "id_user": userCheckToken.id_user,
+                        "detail": details,
+                    }
+                    var addReportPost = await PostService.addReportPost(dataRepost);
+                    if (addReportPost != null) {
+                        res.send(JSON.stringify({
+                            code: "1000",
+                            message: 'OK',
+                            // Data: postCheckId,
+                        }))
+
+                    }
+                } else {
+                    Error.code9997(res);
+                }
             }
             else {
                 Error.code9992(res);
@@ -368,9 +403,9 @@ let addLike = async (req, res) => {
                     if (upDateLike != null) {
                         var postCheckIdUpDate = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
                         res.send(JSON.stringify({
-                            Code: "1000",
-                            Message: 'OK',
-                            Data: postCheckIdUpDate.id_list_user_like.split(",").length - 1,
+                            code: "1000",
+                            message: 'OK',
+                            data: postCheckIdUpDate.id_list_user_like.split(",").length - 1 + "",
                         }))
                     } else {
                         Error.code9999(res);

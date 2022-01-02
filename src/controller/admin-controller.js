@@ -1,5 +1,6 @@
 const userservice = require('../services/user-services')
 const Error = require('../module/error');
+
 let home = async (req, res) => {
   if (req.user.role == "1") {
     res.render('admin/trangchu.ejs');
@@ -13,13 +14,67 @@ let login = async (req, res) => {
   res.render('admin/login.ejs');
 }
 let getAlluser = async (req, res) => {
+  const mess = req.flash('messages');
   var listuser = await userservice.getalluser();
   res.render('admin/getalluser.ejs', {
     userData: listuser,
+    mess: mess
+
   })
 }
 let userdetail = async (req, res) => {
   res.render('admin/detail.ejs')
+}
+let editUser = async (req, res) => {
+  var idUser = req.query.id;
+  var getUser = await userservice.checkiduser(idUser);
+  res.render('admin/editUser.ejs', { getUser })
+
+}
+let postEditUser = async (req, res) => {
+  // console.log(req.body);
+  var user = {
+    "id_user": req.query.id,
+    "name_user": req.body.name_user,
+    //    "sdt_user":req.body.sdt_user,
+    "pass_user": req.body.pass_user,
+    "linkuser": req.body.linkuser,
+    "role": (req.body.role == "Admin") ? 1 : 0,
+  }
+  console.log(user)
+  // User.adminUpDateUserInfor = (sdt_user,name_user,pass_user,linkuser,role,idUser)
+  var updateUser = await userservice.adminUpDateUserInfor(user);
+  req.flash('messages', "Thành Công");
+  res.redirect('/admin/getalluser');
+
+}
+
+let deleteUserUI = async (req, res) => {
+  try {
+    let user = await userservice.deleteUser(req.body.id);
+    return res.status(200).json({
+      'message': 'success'
+    })
+
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json(e);
+  }
+}
+let addUser = async (req, res) => {
+
+  var newDataUser = {
+    "name_user": req.body.name_user,
+    "sdt_user": req.body.sdt_user,
+    "pass_user": req.body.pass_user,
+    "role": (req.body.role == "Admin") ? 1 : 0,
+
+  }
+  console.log(newDataUser);
+  var newUser = await userservice.addUser(newDataUser);
+  req.flash('messages', "Thành Công");
+  res.redirect('/admin/getalluser');
+
 }
 // api
 let setRole = async (req, res) => {
@@ -184,7 +239,7 @@ let getBasicUserInfo = async (req, res) => {
   else {
     var userCheckToken = await userservice.checkUserByToken(token);
     if (userCheckToken !== null) {
-      if (userCheckToken.role == role||userCheckToken.role == "2") {
+      if (userCheckToken.role == role || userCheckToken.role == "2") {
         var userActive = await userservice.adminCheckUser(userId);
         console.log(userActive);
         if (userActive !== null) {
@@ -222,4 +277,8 @@ module.exports = {
   setSersate: setSersate,
   deleteUser: deleteUser,
   getBasicUserInfo: getBasicUserInfo,
+  editUser: editUser,
+  postEditUser: postEditUser,
+  deleteUserUI: deleteUserUI,
+  addUser: addUser,
 }

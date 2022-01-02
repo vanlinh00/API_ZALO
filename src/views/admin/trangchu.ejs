@@ -1,15 +1,53 @@
 <% extend("../mainadmin.ejs") %>
 <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-         <p1></p1>
-          <!-- /.card -->
+  <div class="container-fluid ">
+    <!-- <div class="row row1">
 
-        </div>
-        <!-- /.col -->
+      <div class="col-6 chart trangchuchart">
+        <p1 class="textvbd">Số User Sử dụng hệ thống</p1>
+        <canvas id="myChart" width="300" height="200"></canvas>
       </div>
-      <!-- /.row -->
-    </div>
-    <!-- /.container-fluid -->
-  </section>
+      <div class="col-6 chart trangchuchart">
+        <p1 class="textvbd">VĂN BẢN ĐI</p1>
+        <canvas id="myChartf" width="300" height="200"></canvas>
+      </div> -->
+
+</section>
+<script>
+  
+
+
+let myDoughnutChart = document.getElementById("myChart").getContext('2d');
+
+let chart1 = new Chart(myDoughnutChart, {
+  type: 'doughnut',
+  data: {
+      labels: ['VĂN BẢN ĐÃ PHÊ DUYỆT', 'VĂN BẢN CHƯA PHÊ DUYỆT'],
+      datasets: [ {
+          data: [50, 70],
+          backgroundColor: ['#49A9EA', '#36CAAB']
+      }]
+  },
+  // options: {
+  //     title: {
+  //         text: "VĂN BẢN ĐẾN",
+  //         display: true
+  //     }
+  // }
+});
+let myDoughnutChart2 = document.getElementById("myChartf").getContext('2d');
+
+var vbdChuPheDuyet=100;
+var vbddaPheDuyet=50;
+let chart12 = new Chart(myDoughnutChart2, {
+  type: 'doughnut',
+  data: {
+      labels: ['VĂN BẢN ĐÃ PHÊ DUYỆT', 'VĂN BẢN CHƯA PHÊ DUYỆT'],
+      datasets: [ {
+          data: [vbddaPheDuyet, vbdChuPheDuyet],
+          backgroundColor: ['#49A9EA', '#36CAAB']
+      }]
+  },
+});
+
+</script>

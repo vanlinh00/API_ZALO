@@ -146,7 +146,27 @@ let updatePassWorkUser = (idUser, passWord) => {
 let updateInformationUser = (username,described,avatar,address,phone) => {
     return new Promise((async (resolve, reject) => {
         try {
+            
             let user = await usermodel.updateInformationUser(username,described,avatar,address,phone);
+           // console.log(user);
+            if (user.changedRows == 1) {
+                resolve(true);
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+
+let adminUpDateUserInfor = (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            
+ // User.adminUpDateUserInfor = (sdt_user,name_user,pass_user,linkuser,role,idUser)
+            let user = await usermodel.adminUpDateUserInfor( data.name_user, data.pass_user,data.linkuser,data.role,data.id_user);
            // console.log(user);
             if (user.changedRows == 1) {
                 resolve(true);
@@ -421,4 +441,5 @@ module.exports = {
     updateCode:updateCode,
     updatePassWorkUser:updatePassWorkUser,
     updateInformationUser:updateInformationUser,
+    adminUpDateUserInfor:adminUpDateUserInfor,
 }

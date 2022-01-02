@@ -14,11 +14,11 @@ let getComment = async (req, res) => {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
             var postCheckId = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
-            if (postCheckId !== null && postCheckId.idblock == "0") {
+            if (postCheckId !== null) {
                 console.log(postCheckId)
                 var listComment = [];
                 var listIdComment = postCheckId.id_list_user_cm.split(",");
-                console.log(listIdComment);
+               // console.log(listIdComment);
                 var variableGetCountComment = listIdComment.length - 1;
                 if (count < listIdComment.length - 1) {
                     variableGetCountComment = count;
@@ -58,10 +58,13 @@ let addComment = async (req, res) => {
         if (userCheckToken !== null) {
             var postCheckId = await PostService.checkPostByIdBase(id_post, userCheckToken.id_user);
             if (postCheckId !== null && postCheckId.idblock == "0") {
+                let date_ob = new Date();
+                let seconds = date_ob.getTime();
+
                 var newComment = {
                     id_user: userCheckToken.id_user,
                     content_cm: comment,
-                    //  createdate_cm
+                    createdate_cm: seconds,
                 }
                 var addComment = await CommentService.addComment(newComment);
                 var listIdCommet = postCheckId.id_list_user_cm + addComment.id + ",";

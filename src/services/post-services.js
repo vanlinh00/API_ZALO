@@ -69,7 +69,7 @@ let checkPostById = async (idPost, idUser) => {
                         "image": image,
                         "video": "",
                         "author": author,
-                        "state": "trang thay bai",
+                       // "state": "trang thay bai",
                         "id_blocked": idblock,
                         "can_edit": canedit,
                         "banned ": "",
@@ -189,7 +189,7 @@ let checkPostByIdBase = (idPost, idUser) => {
     return new Promise((async (resolve, reject) => {
         try {
             let post = await postmodel.checkPostByid(idPost);
-            console.log(post);
+           // console.log(post);
             if (post != null && post != undefined) {
                 if (post.length != 0) {
                     var idblock = "0";
@@ -281,6 +281,51 @@ let getListPostWithBetween = async (index, count) => {
         }
     }));
 }
+
+
+let reportPost = async (idPost, idUser) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+
+            let postReport = await postmodel.reportPost(idPost,idUser);
+
+            if (postReport != null && postReport != undefined) {
+                if (postReport.length != 0) {
+
+                    resolve(true);
+                    
+                }
+                else {
+                    resolve(false);
+                }
+            }
+            else {
+                resolve(null)
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+
+}
+
+let addReportPost = async (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            let ReportPost = await postmodel.addReportPost(data);
+           // console.log(post);
+            if (ReportPost.id != 0) {
+                resolve(ReportPost);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+
+}
 module.exports = {
     addPost: addPost,
     checkPostById: checkPostById,
@@ -293,5 +338,6 @@ module.exports = {
     UpDateComment: UpDateComment,
     upDateLike: upDateLike,
     getListPostWithBetween:getListPostWithBetween,
-
+    reportPost:reportPost,
+    addReportPost:addReportPost,
 }

@@ -81,34 +81,13 @@ let initWebRouter = function (app) {
   app.post('/user/setuserinfo',usercontroller.setUserInfo);
 
 
-  app.get('/admin/login', checkNotAuthenticatedAdmin, admincontroller.login);
-  app.post('/admin/login', checkNotAuthenticatedAdmin, passport.authenticate('local', {
-    successRedirect: '/admin/home',
-    failureRedirect: '/admin/login',
-    failureFlash: true
-  }))
-  app.get('/admin/home', checkAuthenticatedAdmin, admincontroller.home);
-  app.get('/admin/getalluser', checkAuthenticatedAdmin, admincontroller.getAlluser);
-  app.get('/admin/use', admincontroller.userdetail);
-
-  app.delete('/logout/admin', (req, res) => {
-    req.logOut()
-    res.redirect('/admin/login')
-  })
-  function checkAuthenticatedAdmin(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next()
-    }
-
-    res.redirect('/admin/login')
-  }
-
-  function checkNotAuthenticatedAdmin(req, res, next) {
-    if (req.isAuthenticated()) {
-      return res.redirect('/admin/home')
-    }
-    next()
-  }
+  // admin
+   app.get('/admin/home', checkAuthenticated, admincontroller.home);
+  app.get('/admin/getalluser', checkAuthenticated,admincontroller.getAlluser);
+  app.get('/admin/edituser',  admincontroller.editUser);
+  app.post('/admin/edituser',  admincontroller.postEditUser);
+  app.post('/admin/deleteUserUI', admincontroller.deleteUserUI);
+  app.post('/admin/addUser',admincontroller.addUser);
 
 
   //chat

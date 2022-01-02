@@ -125,7 +125,7 @@ let getListConversationByID = (index,count,idUser) => {
             var listConversation = [];
 
             let data = await chatmodel.getListConversationByID(idUser);
-
+          //  console.log(data);
             if (data != 0) {
                 var ConVerSationNotBlock = data;
                 // console.log(ConVerSationNotBlock)
@@ -134,11 +134,11 @@ let getListConversationByID = (index,count,idUser) => {
                     count=ConVerSationNotBlock.length;
 
                 }
-                if(index>ConVerSationNotBlock.length)
+                if(index>ConVerSationNotBlock.length||index<0)
                 {
                     index=0;
                 }
-                for (let i = index-1; i <count; i++) {
+                for (let i = index; i <count; i++) {
 
                     //     variable = (condition) ? value1: value2;
                     var checkUserBlockAB = await usermodel.checkUserBlock((ConVerSationNotBlock[i].id_user_A != idUser) ? ConVerSationNotBlock[i].id_user_A : ConVerSationNotBlock[i].Id_user_B, idUser);
@@ -168,7 +168,7 @@ let getListConversationByID = (index,count,idUser) => {
                         }
                         var dataConVerSation = {
                             "id": ConVerSationNotBlock[i].id + "",
-                            "parner": userReciver,
+                            "partner": userReciver,
                             "lastmesssage": lastmesssage
                         }
 

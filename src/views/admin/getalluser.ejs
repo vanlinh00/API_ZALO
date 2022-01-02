@@ -1,11 +1,68 @@
 <% extend("../mainadmin.ejs") %>
+
+
+  <script>
+
+
+    $(document).ready(function () {
+
+      $("#addUser1").click(function () {
+        $("#addUser").modal('show');
+      });
+
+    });
+
+    var variablesAddRoom = "<%= mess  %>";
+    if (variablesAddRoom.length != 0) {
+      $(document).ready(function () {
+
+        $("#myMessage").modal('show');
+
+
+      });
+    }
+
+
+    $(document).ready(function () {
+      $(".delete-vbden").click(function () {
+
+        if (!confirm('Bạn có muốn xóa user này không?')) {
+          return
+        }
+        let id = $(this).data('deletedata');
+        let node = this;
+        //alert(id);
+        $.ajax({
+          method: 'POST',
+          url: `${window.location.origin}/admin/deleteUserUI`,
+          data: { id: id },
+          success: function (data) {
+            node.closest("tr").remove();
+            alertify.success('Delete succeed!');
+          },
+          error: function (err) {
+            alert(id);
+          }
+        });
+      });
+
+    });
+  </script>
+  <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Tất cả các user</h3>
+              <h3 class="card-title">TẤT CẢ USER</h3>
+            </div>
+            <div>
+
+              <button id="addUser1" type="button" class="btn btn-primary btnAddRoom">
+                Thêm User
+              </button>
+
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -14,10 +71,11 @@
                   <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Email</th>
-                    <th>Password</th>
-                    <th>Actions</th>
+                    <th>PhoneNumber</th>
 
+                    <th>Password</th>
+                    <th>role</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -29,13 +87,25 @@
                       <td>
                         <%=data.name_user%>
                       </td>
+
                       <td>
-                        <%=data.sdt_user %>
+                        <%=data.pass_user %>
                       </td>
                       <td>
                         <%=data.pass_user %>
                       </td>
 
+                      <% if (data.role==0) { %>
+                        <td>
+                          User
+                        </td>
+                        <%} else { %>
+                          <td>
+                            Admin
+                          </td>
+                          <% } %>
+
+                            <!-- 
                       <td>
                         <a href="/admin/users/edit?id=<%=data.id_user%>" class="edit" title="Edit" data-toggle="tooltip"><i
                             class="material-icons"></i>edit</a>
@@ -43,7 +113,28 @@
                             class="material-icons"></i>view</a>
                         <a href="/admin/users/delete?id=<%=data.id_user%>" class="delete" title="Delete"
                           data-toggle="tooltip"><i class="material-icons"></i>delete</a>
-                      </td>
+                      </td> -->
+
+                            <td class="project-actions text-right">
+                              <!-- <a class="btn btn-primary btn-sm" href="#">
+                            <i class="fas fa-folder">
+                            </i>
+                            View
+                        </a> -->
+                              <a class="btn btn-info btn-sm" href="/admin/edituser?id=<%=data.id_user%>">
+                                <i class="fas fa-pencil-alt">
+                                </i>
+                                Edit
+                              </a>
+
+                              <a class="btn btn-danger btn-sm delete-vbden" data-deletedata="<%= data.id_user %>"
+                                href="#">
+                                <i class="fas fa-trash">
+                                </i>
+                                Xóa Bỏ
+                              </a>
+
+                            </td>
 
 
                     </tr>
@@ -54,25 +145,13 @@
                         </tr>
                         <% } %>
                 </tbody>
+                <tfoot>
 
-                <!-- <tr>
-                    <td>Trident</td>
-                    <td>Internet
-                      Explorer 4.0
-                    </td>
-                    <td>Win 95+</td>
-                    <td> 4</td>
-                    <td>X</td>
-                  </tr> -->
-
-                </tbody>
-
+                </tfoot>
               </table>
             </div>
             <!-- /.card-body -->
           </div>
-          <!-- /.card -->
-
         </div>
         <!-- /.col -->
       </div>
@@ -80,3 +159,71 @@
     </div>
     <!-- /.container-fluid -->
   </section>
+  <!-- /.content -->
+
+  <div id="myMessage" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">THÔNG BÁO</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>
+            <%= mess %>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+          <!-- <button type="button" class="btn btn-primary">Save</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="addUser" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h3 class="card-title">Thông tin chi tiết user</h3>
+
+        </div>
+        <div class="modal-body">
+
+          <form role="form" method="post" action="/admin/addUser">
+            <div class="card-body">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Họ Và Tên</label>
+                <input class="form-control" name="name_user">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Số Điện Thoại</label>
+                <input class="form-control" name="sdt_user">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Mật Khẩu</label>
+                <input class="form-control" name="pass_user">
+              </div>
+              <div class="form-group col">
+                <label for="exampleInputPassword1">Quyền User</label>
+                <select class="custom-select form-control-border" name="role" id="chuc_vu">
+
+                  <option>Admin</option>
+                  <option>User</option>
+
+                </select>
+              </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>

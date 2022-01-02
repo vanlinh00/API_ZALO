@@ -185,7 +185,23 @@ User.updateInformationUser = (username,described,avatar,address,phone) => {
           }
       }));
   };
-
+  
+  User.adminUpDateUserInfor = (name_user,pass_user,linkuser,role,idUser) => {
+    
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`UPDATE user SET name_user='${name_user}', pass_user='${pass_user}', linkuser='${linkuser}', role='${role}' WHERE 	id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 // block
 User.deleteBlockUser=(id)=> {
     return new Promise((async (resolve, reject) => {
