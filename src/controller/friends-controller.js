@@ -2,6 +2,8 @@
 const Error = require('../module/error');
 const UserService = require('../services/user-services')
 const friendService = require('../services/friends-services')
+const PostService = require('../services/post-services')
+
 let getUserFrineds = async (req, res) => {
     token = req.body.token;
     userId = req.body.userId;
@@ -100,7 +102,7 @@ let getRquestFriend = async (req, res) => {
     userId = req.body.userId;
     index = req.body.index;
     count = req.body.count;
-    if (count == null | count == undefined || index == undefined || index == null || token == "" || token == undefined || token == null) {
+    if (index<1 ||count == null | count == undefined || index == undefined || index == null || token == "" || token == undefined || token == null) {
         Error.code1004(res);
     } else {
         var userCheckToken = await UserService.checkUserByToken(token);
@@ -144,7 +146,7 @@ let setAcceptFriend = async (req, res) => {
     token = req.body.token;
     userId = req.body.userId;
     isAccept = req.body.isAccept;
-    if (userId==undefined||userId==""||userId==null||userId<=0||isAccept < 0 || isAccept > 1 || isAccept == undefined || token == "" || token == undefined || token == null) {
+    if (userId == undefined || userId == "" || userId == null || userId <= 0 || isAccept < 0 || isAccept > 1 || isAccept == undefined || token == "" || token == undefined || token == null) {
         Error.code1004(res);
     } else {
         var userCheckToken = await UserService.checkUserByToken(token);
@@ -179,9 +181,105 @@ let setAcceptFriend = async (req, res) => {
 
     }
 }
+let search = async (req, res) => {
+    token = req.body.token;
+    userId = req.body.user_id;
+    keyword = req.body.keyword;
+    index = req.body.index;
+    count = req.body.count;
+    if (keyword == undefined || keyword == "" || count == null | count == undefined || index == undefined || index == null || token == "" || token == undefined || token == null) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            if (userCheckToken.id_user == userId) {
+                let date_ob = new Date();
+                let seconds = date_ob.getTime();
+                var listPost = [];
+                var dataSearch = {
+                    "id_user": userCheckToken.id_user,
+                    "keword": keyword,
+                    "create_date": seconds,
+                }
+                var addSearch = await friendService.addSearch(dataSearch);
+                var allListPost = await friendService.searchPost(keyword);
+                for (let i = 0; i < allListPost.length; i++) {
+                    var postCheckId = await PostService.checkPostById(allListPost[i].id, userCheckToken.id_user);
+                    listPost.push(postCheckId);
+
+                }
+                res.send(JSON.stringify({
+                    code: "1000",
+                    message: 'OK',
+                    data: listPost,
+                }))
+
+            } else {
+                Error.code1005(res);
+            }
+
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
+let getUserInfo = async (req, res) => {
+    token = req.body.token;
+    userId = req.body.userId;
+
+    if (userId == undefined || userId == "" || userId == null || userId <= 0 || token == "" || token == undefined || token == null) {
+        Error.code1004(res);
+    } else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+
+            let data = await UserService.checkiduser(userId);
+            // console.log(data)
+            if (data != undefined) {
+                var friendOfUser = await friendService.getlistfriendsbyid(userId);
+                // console.log(friendOfUser)
+                var isFriend = "0"
+                if (friendOfUser != null) {
+                    for (let i = 0; i < friendOfUser.length; i++) {
+                        if (friendOfUser[i] == userCheckToken.id_user) {
+                            isFriend = "1";
+                        }
+                    }
+                }
+
+                var getUser = {
+                    "id": data.id_user + "",
+                    "username": data.name_user,
+                    "description": data.described,
+                    "avatar": data.linkavatar_user,
+                    "link": data.linkuser,
+                    "address": data.address,
+                    "listing": (friendOfUser != null) ? friendOfUser.length + "" : 0 + "",
+                    "is_friend": isFriend,
+                    "online": 1 + "",
+                }
+                res.send(JSON.stringify({
+                    code: "1000",
+                    message: 'OK',
+                    data: getUser
+                }))
+            } else {
+                Error.code9995(res);
+            }
+        }
+        else {
+            Error.code9998(res);
+        }
+
+    }
+}
 module.exports = {
     getUserFrineds: getUserFrineds,
     setRquestFriend: setRquestFriend,
     getRquestFriend: getRquestFriend,
     setAcceptFriend: setAcceptFriend,
+    search: search,
+    getUserInfo: getUserInfo,
 }

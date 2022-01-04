@@ -32,7 +32,6 @@ let editUser = async (req, res) => {
 
 }
 let postEditUser = async (req, res) => {
-  // console.log(req.body);
   var user = {
     "id_user": req.query.id,
     "name_user": req.body.name_user,
@@ -41,10 +40,13 @@ let postEditUser = async (req, res) => {
     "linkuser": req.body.linkuser,
     "role": (req.body.role == "Admin") ? 1 : 0,
   }
-  console.log(user)
-  // User.adminUpDateUserInfor = (sdt_user,name_user,pass_user,linkuser,role,idUser)
-  var updateUser = await userservice.adminUpDateUserInfor(user);
-  req.flash('messages', "Thành Công");
+  if (req.body.name_user == "" || req.body.sdt_user == "" || req.body.pass_user == "") {
+    req.flash('messages', "Parameter value is invalid");
+  }
+  else {
+    req.flash('messages', "OK");
+    var updateUser = await userservice.adminUpDateUserInfor(user);
+  }
   res.redirect('/admin/getalluser');
 
 }
@@ -61,18 +63,36 @@ let deleteUserUI = async (req, res) => {
     return res.status(500).json(e);
   }
 }
-let addUser = async (req, res) => {
-
-  var newDataUser = {
-    "name_user": req.body.name_user,
-    "sdt_user": req.body.sdt_user,
-    "pass_user": req.body.pass_user,
-    "role": (req.body.role == "Admin") ? 1 : 0,
+let addUser = async (rep, res) => {
+  var phoneNumber = rep.body.sdt_user;
+  var passWord = rep.body.pass_user;
+  if (phoneNumber === null || passWord === null || phoneNumber === '' || passWord === '' || phoneNumber === undefined || passWord === undefined) {
+    rep.flash('messages', "Parameter value is invalid");
+  }
+  else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0' || phoneNumber === passWord || passWord.length > 10 || passWord.length < 6) {
+    rep.flash('messages', "Parameter is not enough");
+  } else {
+    var user = await userservice.checkphoneuser(phoneNumber);
+    if (user == null) {
+      var newDataUser = {
+        "name_user": "User",
+        "sdt_user": rep.body.sdt_user,
+        "pass_user": rep.body.pass_user,
+        "linkuser": rep.body.sdt_user + "/url",
+        "role": (req.body.role == "Admin") ? 1 : 0,
+      }
+      var newUser = await userservice.addUser(newDataUser);
+      if (newUser.sdt_user != null) {
+        rep.flash('messages', "OK");
+      }
+    }
+    else {
+      if (user.sdt_user == phoneNumber) {
+        rep.flash('messages', "User existed");
+      }
+    }
 
   }
-  console.log(newDataUser);
-  var newUser = await userservice.addUser(newDataUser);
-  req.flash('messages', "Thành Công");
   res.redirect('/admin/getalluser');
 
 }

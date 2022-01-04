@@ -1,6 +1,7 @@
 
 const Error = require('../module/error')
 const UserService = require('../services/user-services')
+const friendService = require('../services/friends-services')
 var jwt = require('jsonwebtoken');
 
 let sigup = async (rep, res) => {
@@ -19,7 +20,7 @@ let sigup = async (rep, res) => {
                 "name_user": "User",
                 "sdt_user": rep.body.sdt_user,
                 "pass_user": rep.body.pass_user,
-                "linkuser":rep.body.sdt_user+"/url"
+                "linkuser": rep.body.sdt_user + "/url"
             }
             var newUser = await UserService.addUser(newDataUser);
             if (newUser.sdt_user != null) {
@@ -119,11 +120,11 @@ let setBlockDiary = async (req, res) => {
         if (userCheckToken !== null) {
             var checkUserId = await UserService.checkiduser(userId);
 
-            console.log("id can block" + userId);
+            console.log("id can block" + checkUserId);
             console.log("id nguoi  block" + userCheckToken.id_user);
             if (checkUserId != undefined) {
                 var checkUserABlockUserB = await UserService.checkBlockUserAB(userId, userCheckToken.id_user);
-                
+
                 if (checkUserABlockUserB == undefined && userId != userCheckToken.id_user) {
                     var checkUserBBlockUserA = await UserService.checkBlockUserAB(userCheckToken.id_user, userId);
                     var check = 0;
@@ -202,7 +203,7 @@ let getVerifyCode = async (req, res) => {
                 res.send(JSON.stringify({
                     code: "1000",
                     message: 'ok',
-                    data: code+""
+                    data: code + ""
                 }));
             }
         }
@@ -239,7 +240,7 @@ let checkVerifyCode = async (req, res) => {
                     res.send(JSON.stringify({
                         code: "1000",
                         message: 'ok',
-                        data: datauser+""
+                        data: datauser + ""
                     }));
 
                 } else {
@@ -348,6 +349,131 @@ let setUserInfo = async (req, res) => {
     }
 
 }
+let getSaveSearch = async (req, res) => {
+    var count = req.body.count;
+    var token = req.body.token;
+    var index = req.body.index;
+    if (token == "" || token == undefined || count == undefined || count == '' || index == '' || count == null || index == null || index == undefined) {
+        Error.code1004(res);
+    }
+    else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+            var checkHistorySearch = await UserService.getSaveSearch(userCheckToken.id_user, index, count);
+            res.send(JSON.stringify({
+                code: "1000",
+                message: 'OK',
+                data: checkHistorySearch,
+            }))
+        }
+        else {
+            Error.code9998(res);
+        }
+    }
+}
+let deleteSavedSearch = async (req, res) => {
+
+    var token = req.body.token;
+    var search_id = req.body.search_id;
+    var all = req.body.all;
+    if (all != 0 && all != 1 || search_id == undefined || search_id <= 0 || token == "" || token == undefined) {
+        Error.code1004(res);
+    }
+    else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+
+            if (all == 0) {
+                var deleteSaveSearch = await UserService.deleteSavedSearch(search_id);
+                if (deleteSaveSearch != null) {
+                    res.send(JSON.stringify({
+                        code: "1000",
+                        message: 'OK',
+                    }))
+                }
+                else {
+                    Error.code9994(res);
+                }
+            }
+            else {
+                var deleteSaveSearch = await UserService.deleteAllSavedSearch(userCheckToken.id_user);
+                if (deleteSaveSearch != null) {
+                    res.send(JSON.stringify({
+                        code: "1000",
+                        message: 'OK',
+                    }))
+                }
+                else {
+                    Error.code9994(res);
+                }
+            }
+
+
+
+        }
+        else {
+            Error.code9998(res);
+        }
+    }
+}
+let getSuggestedListFriends = async (req, res) => {
+    var count = req.body.count;
+    var token = req.body.token;
+    var index = req.body.index;
+    if (token == "" || token == undefined || count == undefined || count == '' || index == '' || count == null || index == null || index == undefined) {
+        Error.code1004(res);
+    }
+    else {
+        var userCheckToken = await UserService.checkUserByToken(token);
+        if (userCheckToken !== null) {
+
+            var getallFriendsOfFriend = await UserService.getallFriendsOfFriendUserLogin(userCheckToken.id_user);
+            console.log(getallFriendsOfFriend);
+            var allSameFriendUserlogin = [];
+            for(let i = 0; i < getallFriendsOfFriend.length; i++) {
+                for (let j = 0; j < getallFriendsOfFriend[i].length; j++) {
+                    var allSameFriend2User = await UserService.allSameFriend2User(userCheckToken.id_user, getallFriendsOfFriend[i][j]);
+                    if(allSameFriend2User.length!=0) {
+                        var sameFriend = {
+                            "id_User": getallFriendsOfFriend[i][j],
+                            "listSameFriend": allSameFriend2User,
+                        }
+                        allSameFriendUserlogin.push(sameFriend);
+                    }
+                  
+                }
+            }
+    
+            var listFriendSuggesters=[];
+            for(let i=0;i< allSameFriendUserlogin.length;i++)
+            {
+                var getUserByid= await UserService.checkiduser(allSameFriendUserlogin[i].id_User);
+                if(getUserByid!=null)
+                {
+                  
+                    var listUser={
+                        "idUser":allSameFriendUserlogin[i].id_User,
+                        "userName":getUserByid.name_user,
+                        "avatar":getUserByid.linkavatar_user,
+                       "sameFriends":allSameFriendUserlogin[i].listSameFriend.length+"",
+                    }
+                    listFriendSuggesters.push(listUser);
+                }
+             
+    
+            }
+         
+            res.send(JSON.stringify({
+                code: "1000",
+                message: 'OK',
+                data: listFriendSuggesters,
+            }))
+        }
+        else {
+            Error.code9998(res);
+        }
+    }
+}
 module.exports = {
     sigup: sigup,
     login: login,
@@ -358,4 +484,7 @@ module.exports = {
     checkVerifyCode: checkVerifyCode,
     changePassword: changePassword,
     setUserInfo: setUserInfo,
+    getSaveSearch: getSaveSearch,
+    deleteSavedSearch: deleteSavedSearch,
+    getSuggestedListFriends: getSuggestedListFriends,
 }

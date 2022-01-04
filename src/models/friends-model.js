@@ -137,4 +137,19 @@ Friends.getrequestedfriendWithUserB = (idUserB) => {
         }
     }));
 };
+Friends.addSearch = (data) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query("INSERT INTO tbl_search SET ?", data, (err, res) => {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve({ id: res.insertId, ...data });
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 module.exports = Friends;

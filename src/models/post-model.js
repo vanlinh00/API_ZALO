@@ -153,7 +153,7 @@ Post.deletePost = (id) => {
     }));
 };
 
-Post.getListPostWithBetween=(lastId,lastIdDatabase) => {
+Post.getListPostWithBetween = (lastId, lastIdDatabase) => {
 
     return new Promise((async (resolve, reject) => {
         try {
@@ -171,7 +171,7 @@ Post.getListPostWithBetween=(lastId,lastIdDatabase) => {
 };
 
 
-Post.reportPost = (idPost,idUser) => {
+Post.reportPost = (idPost, idUser) => {
     return new Promise((async (resolve, reject) => {
         try {
             db.query(`SELECT * FROM tbl_report WHERE id_post ='${idPost}' AND id_user ='${idUser}' AND is_report='${0}'`, (err, res) => {
@@ -194,6 +194,23 @@ Post.addReportPost = (data) => {
                     Error.code1001(res);
                 } else {
                     resolve({ id: res.insertId, ...data });
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
+
+Post.searchPost = (keyword) => {
+
+    return new Promise((async (resolve, reject) => {
+        try {
+db.query('SELECT * FROM tbl_post WHERE content_post LIKE "%' + keyword + '%"', function (err, res) {
+                if (err) {
+                    Error.code1001(res);
+                } else {
+                    resolve(res);
                 }
             })
         } catch (e) {

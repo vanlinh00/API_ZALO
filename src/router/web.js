@@ -10,7 +10,7 @@ const chatcontroller = require('../controller/chat-controller')
 const usercontroller = require('../controller/user-controller')
 const postcontroller = require('../controller/post-controller')
 const commentcontroller = require('../controller/comment-controller')
-const  friendscontroller = require('../controller/friends-controller')
+const friendscontroller = require('../controller/friends-controller')
 
 initializePassport(
   passport
@@ -31,8 +31,8 @@ let initWebRouter = function (app) {
   app.use(passport.initialize())
   app.use(passport.session())
   app.use(methodOverride('_method'))
-  
- // tuan 1
+
+  // tuan 1
   app.post('/user/signup', usercontroller.sigup);
   app.post('/user/login', usercontroller.login);
   app.post('/user/logout', usercontroller.logout);
@@ -45,7 +45,7 @@ let initWebRouter = function (app) {
   app.post('/post/delete_post', postcontroller.deletePost);
 
   // tuan 3
-  app.post('/post/report_post',postcontroller.reportPost);
+  app.post('/post/report_post', postcontroller.reportPost);
   app.post('/comment/get_comment', commentcontroller.getComment);
   app.post('/comment/add_comment', commentcontroller.addComment);
   app.post('/comment/delete_comment', commentcontroller.deleteComment);
@@ -53,41 +53,45 @@ let initWebRouter = function (app) {
   app.post('/post/like/adlike', postcontroller.addLike);
 
   // tuan 4 
-  app.post('/chat/getlistconversation',chatcontroller.getListConversation);
-  app.post('/chat/getconversation',chatcontroller.getconversation);
-  app.post('/chat/deletemessage',chatcontroller.deletemessage);
-  app.post('/chat/deleteconversation',chatcontroller.deleteConversation);
-  app.post('/admin/setrole',admincontroller.setRole);
+  app.post('/chat/getlistconversation', chatcontroller.getListConversation);
+  app.post('/chat/getconversation', chatcontroller.getconversation);
+  app.post('/chat/deletemessage', chatcontroller.deletemessage);
+  app.post('/chat/deleteconversation', chatcontroller.deleteConversation);
+  app.post('/admin/setrole', admincontroller.setRole);
 
   // tuan 5
-  app.post('/friend/get_user_friends',friendscontroller.getUserFrineds);
-  app.post('/admin/setsersate',admincontroller.setSersate);
-  app.post('/admin/deleteuser',admincontroller.deleteUser);
-  app.post('/admin/getbasicuserinfo',admincontroller.getBasicUserInfo);
-  
-  //tuan 6
-  app.post('/friend/set_request_friend',friendscontroller.setRquestFriend);
-  app.post('/friend/get_requested_friend',friendscontroller.getRquestFriend);
-  app.post('/friend/set_accept_friend',friendscontroller.setAcceptFriend);
-  
-  // tuan 7
-  app.post('/user/setblockuser',usercontroller.setBlockUser);
-  app.post('/user/setblockdiary',usercontroller.setBlockDiary);
-  app.post('/user/getverifycode',usercontroller.getVerifyCode);
-  app.post('/user/checkverifycode',usercontroller.checkVerifyCode);
-  
-  // tuan 8
-  app.post('/user/changepassword',usercontroller.changePassword);
-  app.post('/user/setuserinfo',usercontroller.setUserInfo);
+  app.post('/friend/search', friendscontroller.search);
+  app.post('/friend/get_user_friends', friendscontroller.getUserFrineds);
+  app.post('/admin/setsersate', admincontroller.setSersate);
+  app.post('/admin/deleteuser', admincontroller.deleteUser);
+  app.post('/admin/getbasicuserinfo', admincontroller.getBasicUserInfo);
 
+  //tuan 6
+  app.post('/friend/set_request_friend', friendscontroller.setRquestFriend);
+  app.post('/friend/get_requested_friend', friendscontroller.getRquestFriend);
+  app.post('/friend/set_accept_friend', friendscontroller.setAcceptFriend);
+  app.post('/friend/getuserinfo', friendscontroller.getUserInfo);
+
+  // tuan 7
+  app.post('/user/setblockuser', usercontroller.setBlockUser);
+  app.post('/user/setblockdiary', usercontroller.setBlockDiary);
+  app.post('/user/getverifycode', usercontroller.getVerifyCode);
+  app.post('/user/checkverifycode', usercontroller.checkVerifyCode);
+  app.post('/user/del_saved_search',usercontroller.deleteSavedSearch);
+
+  // tuan 8
+  app.post('/user/changepassword', usercontroller.changePassword);
+  app.post('/user/setuserinfo', usercontroller.setUserInfo);
+  app.post('/user/get_suggested_list_friends',usercontroller.getSuggestedListFriends)
+  app.post('/user/getsavedsearch', usercontroller.getSaveSearch);
 
   // admin
-   app.get('/admin/home', checkAuthenticated, admincontroller.home);
-  app.get('/admin/getalluser', checkAuthenticated,admincontroller.getAlluser);
-  app.get('/admin/edituser',  admincontroller.editUser);
-  app.post('/admin/edituser',  admincontroller.postEditUser);
+  app.get('/admin/home', checkAuthenticated, admincontroller.home);
+  app.get('/admin/getalluser', checkAuthenticated, admincontroller.getAlluser);
+  app.get('/admin/edituser', admincontroller.editUser);
+  app.post('/admin/edituser', admincontroller.postEditUser);
   app.post('/admin/deleteUserUI', admincontroller.deleteUserUI);
-  app.post('/admin/addUser',admincontroller.addUser);
+  app.post('/admin/addUser', admincontroller.addUser);
 
 
   //chat

@@ -326,6 +326,7 @@ let addReportPost = async (data) => {
     }));
 
 }
+
 module.exports = {
     addPost: addPost,
     checkPostById: checkPostById,
@@ -340,4 +341,5 @@ module.exports = {
     getListPostWithBetween:getListPostWithBetween,
     reportPost:reportPost,
     addReportPost:addReportPost,
+    
 }

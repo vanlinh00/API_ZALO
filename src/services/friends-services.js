@@ -1,10 +1,11 @@
 const friendsModel = require('../models/friends-model');
-
+const postmodel = require('../models/post-model')
 let  getlistfriendsbyid=async(id) => {
     return new Promise((async (resolve, reject) => {
         try {
-            let data = await friendsModel.getfriendsbyid(id);
-            if (data != 0) {
+    let data = await friendsModel.getfriendsbyid(id);
+         
+            if (data != undefined) {
                 //   console.log(data[0]);
 
                 var listfriend = [];
@@ -16,7 +17,7 @@ let  getlistfriendsbyid=async(id) => {
                     }
 
                 }
-                console.log(listfriend)
+             //   console.log(listfriend)
                 resolve(listfriend);
 
             }
@@ -149,6 +150,40 @@ let setFriend=async (newDataFriend)=>{
         }
     })); 
 }
+
+let searchPost= async (keywords)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let post = await postmodel.searchPost(keywords);
+            if (post.length != undefined) {
+           
+           //  console.log(post);
+                resolve(post);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+let addSearch=async (newDataFriend)=>{
+    return new Promise((async (resolve, reject) => {
+        try {
+            let  addSearch = await friendsModel.addSearch(newDataFriend);
+           
+            if (addSearch!=undefined) {
+                resolve(addSearch);
+            }
+            else {
+                resolve(null);
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })); 
+}
 module.exports = {
     getlistfriendsbyid: getlistfriendsbyid,
     setRquestFriend:setRquestFriend,
@@ -158,4 +193,6 @@ module.exports = {
     deleteQuestFriends:deleteQuestFriends,
     getrequestedfriendWithUserB:getrequestedfriendWithUserB,
     setFriend:setFriend,
+    searchPost:searchPost,
+    addSearch:addSearch,
 }

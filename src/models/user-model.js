@@ -267,6 +267,7 @@ User.checkUserBlock = (idUserA,idUserB) => {
     }));
 };
 
+
 //tbl_codevrify
 User.addCodeVrify = (data) => {
     return new Promise((async (resolve, reject) => {
@@ -348,5 +349,52 @@ User.getlistfriendsbyid = (id) => {
         }
     }));
 };
+// search
+User.getSaveSearch = (idUser) => {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`SELECT * FROM tbl_search WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    resolve(null);
+                } else {
+                    //  console.log('Check phone number successfully');
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+};
 
+User.deleteSavedSearch=(idSearch)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM tbl_search WHERE id = '${idSearch}'`, (err, res) => {
+                if (err) {
+                    console.log('tai sao loi o day');
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
+User.deleteAllSavedSearch=(idUser)=> {
+    return new Promise((async (resolve, reject) => {
+        try {
+            db.query(`DELETE FROM tbl_search WHERE id_user = '${idUser}'`, (err, res) => {
+                if (err) {
+                    console.log('tai sao loi o day');
+                } else {
+                    resolve(res);
+                }
+            })
+        } catch (e) {
+            reject(e);
+        }
+    }));
+}
 module.exports = User;

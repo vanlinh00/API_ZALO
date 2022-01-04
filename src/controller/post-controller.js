@@ -137,7 +137,7 @@ let getListPost = async (req, res) => {
 
     //var idFirstTbPost = await PostService.getFirstItem();
 
-    if (/*index - idFirstTbPost.id < 0 ||*/ count == '' || index == '' || count == null || index == null || index == undefined) {
+    if (/*index - idFirstTbPost.id < 0 ||*/count ==undefined||last_id==undefined|| count == '' || index == '' || count == null || index == null || index == undefined||token==undefined||token=="") {
         Error.code1004(res);
     }
     else {
@@ -200,14 +200,14 @@ let getNewItem = async (req, res) => {
     if (category_id == "" || category_id == null || category_id == undefined) {
         category_id = 0;
     }
-    if (last_id == "" || last_id == null || last_id == undefined || getLastIdTbPost.id < last_id || last_id - idFirstTbPost.id < 0) {
+    if (token==undefined||token == ""||last_id == "" || last_id == null || last_id == undefined || getLastIdTbPost.id < last_id || last_id - idFirstTbPost.id < 0) {
         Error.code1004(res);
     }
     else {
         var idLastTbPost = await PostService.getLastItem();
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
-
+           
             var listPostIndexTo = await PostService.getListPostWithBetween(last_id, idLastTbPost.id);
             var listPost = []
             var newItem = "0";

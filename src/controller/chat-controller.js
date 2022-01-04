@@ -90,8 +90,8 @@ let conversation = async (req, res) => {
     if (conversation.length != 0) {
 
         idroom = conversation[0].id;
-        console.log("list id chat muon lay");
-        console.log(conversation[0].list_id_chat);
+       // console.log("list id chat muon lay");
+      //  console.log(conversation[0].list_id_chat);
         allitemchat = await chatservice.getallchatbylistid(conversation[0].list_id_chat);
         console.log(allitemchat);
     }
@@ -156,7 +156,7 @@ let getconversation = async (req, res) => {
     var conversationId = req.body.conversation;
     var index = req.body.index;
     var count = req.body.count;
-    if (conversationId == "" || conversationId == null || conversationId <= 0 || partnerId == null || partnerId <= 0 || partnerId == "" || count <= 0 || count == "" || count == undefined || count == null || index < 0 || index == "" || index == undefined || index == null || token == "" || token == undefined || token == null) {
+    if (conversationId == undefined&&partnerId==undefined || partnerId == null || partnerId <= 0 || partnerId == "" || count <= 0 || count == "" || count == undefined || count == null || index < 0 || index == "" || index == undefined || index == null || token == "" || token == undefined || token == null) {
         Error.code1004(res);
     } else {
         var userCheckToken = await userservice.checkUserByToken(token);
