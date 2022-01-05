@@ -1,0 +1,66 @@
+<% extend("../mainadmin.ejs") %>
+<section class="content ml-5">
+        <div class="container-fluid ml-5">
+            <div class="row ml-5">
+                <div class="col-8 ml-5">
+                    <div class="card ml-5">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Thông tin chi tiết user</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form role="form" method="post" action="/admin/edituser?id=<%=getUser.id_user%>">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Họ Và Tên</label>
+                                        <!-- <div class="col mt-1">
+                                            <h3 class="card-title">Ngày Sinh</h3>
+                                            <input type="text" class="form-control" placeholder="Nhập ngày sinh"
+                                                name="ngay_sinh">
+                                        </div> -->
+        
+                                        <input class="form-control" value="<%=getUser.name_user%>" name="name_user">
+                                    </div>
+                                    <!-- <div class="form-group">
+                                        <label for="exampleInputPassword1">Số Điện Thoại</label>
+                                        <input class="form-control" value="<%=getUser.sdt_user%>" name="sdt_user">
+                                    </div> -->
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">Mật Khẩu</label>
+                                        <input  class="form-control" value="<%=getUser.pass_user%>" name="pass_user">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword1">LinkUser</label>
+                                        <input class="form-control" value="<%=getUser.linkuser%>" name="linkuser"
+                                          >
+                                    </div>
+                                      <div class="form-group col">
+                                        <label for="exampleInputPassword1">Quyền User</label>
+                                    <select class="custom-select form-control-border" name="role" id="chuc_vu">
+
+                                        <option>Admin</option>
+                                        <option>User</option>
+
+                                    </select>
+                                </div>
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.card -->
