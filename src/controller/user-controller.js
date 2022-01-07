@@ -7,7 +7,7 @@ var jwt = require('jsonwebtoken');
 let sigup = async (rep, res) => {
     var phoneNumber = rep.body.sdt_user;
     var passWord = rep.body.pass_user;
-    if ( phoneNumber === undefined || passWord === undefined) {
+    if (phoneNumber === undefined || passWord === undefined) {
         Error.code1002(res);
     }
     else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0' || phoneNumber === passWord || passWord.length > 10 || passWord.length < 6 || phoneNumber === '' || passWord === '') {
@@ -64,7 +64,7 @@ let login = async (rep, res) => {
                     var userUpdateToken = await UserService.updateTokenUser(userCheckPass.id_user, "token" + user.sdt_user + date.getTime(), date.getTime());
                     if (userUpdateToken != null) {
                         var userUpdate = await UserService.checkphoneuser(phoneNumber);
-                        
+
                         var userdata = {
                             "id": userUpdate.id_user + "",
                             "username": userUpdate.name_user,
@@ -92,7 +92,7 @@ let login = async (rep, res) => {
 }
 let logout = async (rep, res) => {
     var token = rep.body.token;
-  
+
     if (token == null || token == undefined) {
         Error.code1002(res);
 
@@ -126,9 +126,13 @@ let setBlockDiary = async (req, res) => {
     userId = req.body.userId;
 
     type = req.body.type;
-    if (userId == undefined || userId == "" || userId == null || userId <= 0 || type < 0 || type > 1 || type == undefined || token == "" || token == undefined || token == null) {
+    if (token == undefined || userId == undefined || type == undefined) {
+        Error.code1002(res);
+    }
+    else if (token == "" || userId == "" || userId <= 0 || type == "" || type < 0 || type > 1) {
         Error.code1004(res);
-    } else {
+    }
+    else {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
             var checkUserId = await UserService.checkiduser(userId);
@@ -187,11 +191,10 @@ let setBlockUser = async (req, res) => {
 }
 let getVerifyCode = async (req, res) => {
     var phoneNumber = req.body.phoneNumber;
-    if (phoneNumber === null || phoneNumber === '') {
+    if (phoneNumber === undefined) {
         Error.code1002(res);
     }
-    else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0') {
-        console.log(phoneNumber.length);
+    else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0' || phoneNumber === '') {
         Error.code1004(res);
     }
     else {
@@ -228,15 +231,15 @@ let getVerifyCode = async (req, res) => {
 let checkVerifyCode = async (req, res) => {
     var phoneNumber = req.body.phoneNumber;
     var codeverify = req.body.codeverify;
-    if (phoneNumber === null || phoneNumber === '' || codeverify == "") {
+    if (phoneNumber === undefined || codeverify == undefined) {
         Error.code1002(res);
     }
     else if (phoneNumber.length !== 10 || phoneNumber[0] !== '0' || codeverify.length != 4) {
-        console.log(phoneNumber.length);
         Error.code1004(res);
     }
     else {
         var user = await UserService.checkphoneuser(phoneNumber);
+        console.log(user);
         if (user !== null) {
             if (user.sdt_user == phoneNumber) {
 
@@ -246,19 +249,17 @@ let checkVerifyCode = async (req, res) => {
                     var updateCode = await UserService.updateCode(phoneNumber, "");
                     //    console.log(updateCode)
                     var datauser = {
-                        "token": user.token,
-                        "id": user.id_user,
-                        "active": user.isactive,
+                        "token": user.token + "",
+                        "id": user.id_user + "",
+                        "active": user.isactive + "",
                     }
                     res.send(JSON.stringify({
                         code: "1000",
                         message: 'ok',
-                        data: datauser + ""
+                        data: datauser
                     }));
 
                 } else {
-                    //  var addCodeVrify = await UserService.addCodeVrify(dataCodeVrify);
-                    //  console.log(addCodeVrify)
                     Error.code1005(res);
                 }
 
@@ -274,10 +275,10 @@ let changePassword = async (req, res) => {
     var passWord = req.body.passWord;
 
     var newpassWord = req.body.newpassWord;
-    if (passWord === null || passWord === '' || newpassWord === null || newpassWord === '') {
+    if (token == undefined || passWord == undefined || newpassWord == undefined) {
         Error.code1002(res);
     }
-    else if (passWord.length > 10 || passWord.length < 6 || newpassWord.length > 10 || newpassWord.length < 6) {
+    else if (token == "" || passWord.length > 10 || passWord.length < 6 || newpassWord.length > 10 || newpassWord.length < 6) {
 
         Error.code1004(res);
     }
@@ -332,11 +333,13 @@ let setUserInfo = async (req, res) => {
     // var link = req.body.link;
     // var city = req.body.city;
     //  var country = req.body.country;
-    if (username.length > 40 || described.length > 150 || address === null || address === undefined || avatar == "" || avatar == undefined || token == "" || token == undefined || username == "" || username == undefined || described == "" || described == undefined) {
+    if (token == undefined || username == undefined || described == undefined || avatar == undefined || address == undefined) {
         Error.code1002(res);
     }
+    else if (token == "" || username == "" || username.length > 30 || described == "" || described.length > 150) {
+        Error.code1004(res);
+    }
     else {
-
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
             var userUpdateInformation = await UserService.updateInformationUser(username, described, avatar, address, userCheckToken.sdt_user);
@@ -354,6 +357,8 @@ let setUserInfo = async (req, res) => {
                     message: "ok",
                     data: outPut,
                 }));
+            }else{
+                Error.code1005(res);
             }
         }
         else {
@@ -366,7 +371,11 @@ let getSaveSearch = async (req, res) => {
     var count = req.body.count;
     var token = req.body.token;
     var index = req.body.index;
-    if (token == "" || token == undefined || count == undefined || count == '' || index == '' || count == null || index == null || index == undefined) {
+    if (count==undefined||token==undefined||index==undefined) {
+        Error.code1002(res);
+    }
+    else if(token==""||count==""||count<=index||index==""||index<0)
+    {
         Error.code1004(res);
     }
     else {
@@ -389,7 +398,10 @@ let deleteSavedSearch = async (req, res) => {
     var token = req.body.token;
     var search_id = req.body.search_id;
     var all = req.body.all;
-    if (all != 0 && all != 1 || search_id == undefined || search_id <= 0 || token == "" || token == undefined) {
+    if (token == undefined || search_id == undefined || all == undefined) {
+        Error.code1002(res);
+    }
+    else if (token == "" || search_id == "" || search_id <= 0 || all == "" || all != 0 && all != 1) {
         Error.code1004(res);
     }
     else {
@@ -433,7 +445,11 @@ let getSuggestedListFriends = async (req, res) => {
     var count = req.body.count;
     var token = req.body.token;
     var index = req.body.index;
-    if (token == "" || token == undefined || count == undefined || count == '' || index == '' || count == null || index == null || index == undefined) {
+    if (count==undefined||token==undefined||index==undefined) {
+        Error.code1002(res);
+    }
+    else if(count==""||count<=0||token==""||index==""||index<0||index>=count)
+    {
         Error.code1004(res);
     }
     else {
@@ -441,8 +457,8 @@ let getSuggestedListFriends = async (req, res) => {
         if (userCheckToken !== null) {
 
             var getallFriendsOfFriend = await UserService.getallFriendsOfFriendUserLogin(userCheckToken.id_user);
-            
-            console.log(getallFriendsOfFriend);
+
+           // console.log(getallFriendsOfFriend);
             var allSameFriendUserlogin = [];
             for (let i = 0; i < getallFriendsOfFriend.length; i++) {
                 for (let j = 0; j < getallFriendsOfFriend[i].length; j++) {
@@ -457,9 +473,10 @@ let getSuggestedListFriends = async (req, res) => {
 
                 }
             }
-
+            var newCount=(allSameFriendUserlogin.length>count) ? count : allSameFriendUserlogin.length;
+            var newindex=(index>allSameFriendUserlogin.length)?0:index;
             var listFriendSuggesters = [];
-            for (let i = 0; i < allSameFriendUserlogin.length; i++) {
+            for (let i = newindex; i < newCount; i++) {
                 var getUserByid = await UserService.checkiduser(allSameFriendUserlogin[i].id_User);
                 if (getUserByid != null) {
 
