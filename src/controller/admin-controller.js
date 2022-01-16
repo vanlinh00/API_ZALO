@@ -2,6 +2,7 @@ const userservice = require('../services/user-services')
 const Error = require('../module/error');
 
 let home = async (req, res) => {
+  // console.log(req.user);
   if (req.user.role == "1") {
     res.render('admin/trangchu.ejs');
   }
@@ -99,11 +100,14 @@ let addUser = async (rep, res) => {
 // api
 let setRole = async (req, res) => {
 
-  token = req.body.token;
-  role = req.body.role;
-  userId = req.body.userId;
+  var token = req.body.token;
+  var role = req.body.role;
+  var userId = req.body.userId;
   //console.log(req.body);
-  if (token == null || token == undefined || token == "" || role == null || role == undefined || role == "" || userId == null || userId == undefined || userId <= 0) {
+  if (token == undefined || role == undefined || userId == undefined) {
+    Error.code1002(res);
+  }
+  else if (token == "" || role == "" || role < 0 || role > 1 || userId == "" || userId <= 0) {
     Error.code1004(res);
   }
   else {
@@ -112,10 +116,8 @@ let setRole = async (req, res) => {
       if (userCheckToken.role == '2') {
         var userRole = await userservice.checkiduser(userId);
         if (userRole !== null) {
-          if (userRole.role == 0) {
-            if (role == "admin") {
-              role = 1;
-            }
+          if (userRole.role != role) {
+
             var updateUser = await userservice.upDateRoleUser(userId, role);
             if (updateUser !== null) {
               res.send(JSON.stringify({
@@ -127,7 +129,6 @@ let setRole = async (req, res) => {
             else {
               Error.code9995(res);
             }
-
           }
           else {
             Error.code1010(res);
@@ -147,6 +148,52 @@ let setRole = async (req, res) => {
 
   }
 }
+let getAdminPermission = async (req, res) => {
+
+  var token = req.body.token;
+
+  var adminId = req.body.admin_id;
+  //console.log(req.body);
+  if (token == undefined || adminId == undefined) {
+    Error.code1002(res);
+  }
+  else if (token == "" || adminId == "" || adminId <= 0) {
+    Error.code1004(res);
+  }
+  else {
+    var userCheckToken = await userservice.checkUserByToken(token);
+    if (userCheckToken !== null) {
+      var userRole = await userservice.checkiduser(adminId);
+      if (userRole !== null) {
+        if (userRole.role == 1) {
+          var data={
+            "adminId": adminId+"",
+            "role": userRole.role+"",
+            "isActive":userRole.isactive+"",
+          }
+          res.send(JSON.stringify({
+            code: "1000",
+            message: 'OK',
+            data:data,
+          }))
+
+        }
+        else {
+          Error.code9997(res);
+        }
+      }
+      else {
+        Error.code9995(res);
+      }
+
+
+    }
+    else {
+      Error.code9998(res);
+    }
+
+  }
+}
 let setSersate = async (req, res) => {
 
   token = req.body.token;
@@ -154,31 +201,40 @@ let setSersate = async (req, res) => {
   userId = req.body.userId;
   state = req.body.state;
   //console.log(req.body);
-  if (state == undefined || state == "" || token == null || token == undefined || token == "" || role == null || role == undefined || role == "" || userId == null || userId == undefined || userId <= 0) {
+  if (token == undefined || role == undefined || userId == undefined || state == undefined) {
+    Error.code1002(res);
+  }
+  if (token == "" || role == "" || role <= 0 || role > 1 || userId == "" || userId <= 0 || state == "" || state < 0 || state > 1) {
+
     Error.code1004(res);
   }
   else {
     var userCheckToken = await userservice.checkUserByToken(token);
     if (userCheckToken !== null) {
-      if (userCheckToken.role == '2') {
+      if (userCheckToken.role == '2' || userCheckToken.role == '1') {
         var userActive = await userservice.checkiduser(userId);
+        console.log(userActive);
         if (userActive !== null) {
           if (userActive.role != 2) {
             //  console.log(state);
-            var updatActiveUser = await userservice.upDateActiveUser(userId, state);
-            console.log(updatActiveUser);
-            if (updatActiveUser !== null && updatActiveUser != undefined) {
-              res.send(JSON.stringify({
-                code: "1000",
-                message: 'OK',
-              }))
-            } else {
-              Error.code9995(res);
-            }
+            if (userActive.isactive != state) {
+              var updatActiveUser = await userservice.upDateActiveUser(userId, state);
+              // console.log(updatActiveUser);
+              if (updatActiveUser !== null) {
+                res.send(JSON.stringify({
+                  code: "1000",
+                  message: 'OK',
+                }))
+              } else {
+                Error.code9995(res);
+              }
 
+            } else {
+              Error.code1010(res);
+            }
           }
           else {
-            Error.code1010(res);
+            Error.code1009(res);
           }
         }
         else {
@@ -194,6 +250,7 @@ let setSersate = async (req, res) => {
     }
 
   }
+
 }
 let deleteUser = async (req, res) => {
 
@@ -251,11 +308,10 @@ let getBasicUserInfo = async (req, res) => {
   token = req.body.token;
   role = req.body.role;
   userId = req.body.userId;
-  if (token==undefined||role == undefined||userId==undefined) {
+  if (token == undefined || role == undefined || userId == undefined) {
     Error.code1002(res);
   }
-  else if(token == ""||role==""||role<0||role>2||userId==""||userId<=0)
-  {
+  else if (token == "" || role == "" || role < 0 || role > 2 || userId == "" || userId <= 0) {
     Error.code1004(res);
   }
   else {
@@ -303,4 +359,5 @@ module.exports = {
   postEditUser: postEditUser,
   deleteUserUI: deleteUserUI,
   addUser: addUser,
+  getAdminPermission: getAdminPermission,
 }

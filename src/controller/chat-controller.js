@@ -54,7 +54,7 @@ let initIO = (io) => {
 }
 let chatmain = async (req, res) => {
 
-    if (req.user.role == 2) {
+    if (req.user.role !=0) {
         var listuser = await userservice.getalluser();
         res.render('admin/trangchu.ejs')
     } else {
@@ -139,12 +139,12 @@ let getListConversation = async (req, res) => {
         var userCheckToken = await userservice.checkUserByToken(token);
         if (userCheckToken !== null) {
             var getListConversation = await chatservice.getListConversationByID(index, count, userCheckToken.id_user);
-            //  console.log(getListConversation);
+           // console.log(getListConversation);
             //console  console.log("vao cho phan get conversation by id roi");
             res.send(JSON.stringify({
                 code: "1000",
                 message: 'OK',
-                data: getListConversation,
+                data: (getListConversation!=null)?getListConversation:[],
                 numberNewMessage: "0"
             }))
         }

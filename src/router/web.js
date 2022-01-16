@@ -57,6 +57,7 @@ let initWebRouter = function (app) {
   app.post('/chat/getconversation', chatcontroller.getconversation);
   app.post('/chat/deletemessage', chatcontroller.deletemessage);
   app.post('/chat/deleteconversation', chatcontroller.deleteConversation);
+  app.post('/admin/getAdminPermission', admincontroller.getAdminPermission);
   app.post('/admin/setrole', admincontroller.setRole);
 
   // tuan 5
@@ -130,6 +131,7 @@ let initWebRouter = function (app) {
     res.redirect('/login')
   })
   function checkAuthenticated(req, res, next) {
+   // console.log(req);
     if (req.isAuthenticated()) {
       return next()
     }
@@ -138,7 +140,9 @@ let initWebRouter = function (app) {
   }
 
   function checkNotAuthenticated(req, res, next) {
+   
     if (req.isAuthenticated()) {
+
       return res.redirect('/')
     }
     next()

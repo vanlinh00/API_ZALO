@@ -14,6 +14,7 @@ let sigup = async (rep, res) => {
         Error.code1004(res);
     } else {
         var user = await UserService.checkphoneuser(phoneNumber);
+        
         if (user == null) {
             var newDataUser = {
                 "name_user": "User",
