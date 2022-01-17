@@ -100,7 +100,7 @@ let addPost = async (req, res) => {
 }
 
 let getPost = async (req, res) => {
-    var id_post = req.body.id_post;
+    var id_post = req.body.id;
     var token = req.body.token;
 
     if (token == undefined || id_post == undefined) {
@@ -226,8 +226,8 @@ let getNewItem = async (req, res) => {
                 code: "1000",
                 message: 'OK',
                 data: listPost,
-                "NewItems": listPost.length - 1 + "",
-                "LastID": listPostIndexTo[listPostIndexTo.length - 1].id + "",
+                "new_items": listPost.length - 1 + "",
+                "last_id": listPostIndexTo[listPostIndexTo.length - 1].id + "",
             }))
         }
         else {
@@ -240,7 +240,7 @@ let edit_post = async (req, res) => {
     var token = req.body.token;
     var id_post = req.body.id;
     var described = req.body.described;
-    var image = req.body.image;
+   // var image = req.body.image;
     if (token == undefined || id_post == undefined || described == undefined) {
         Error.code1002(res);
     }

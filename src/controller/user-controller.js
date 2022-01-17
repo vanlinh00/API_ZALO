@@ -5,8 +5,9 @@ const friendService = require('../services/friends-services')
 var jwt = require('jsonwebtoken');
 
 let sigup = async (rep, res) => {
-    var phoneNumber = rep.body.sdt_user;
-    var passWord = rep.body.pass_user;
+
+    var phoneNumber = rep.body.phonenumber;
+    var passWord = rep.body.password;
     if (phoneNumber === undefined || passWord === undefined) {
         Error.code1002(res);
     }
@@ -14,20 +15,33 @@ let sigup = async (rep, res) => {
         Error.code1004(res);
     } else {
         var user = await UserService.checkphoneuser(phoneNumber);
-        
+        console.log(rep.body.phonenumber);
         if (user == null) {
+
             var newDataUser = {
                 "name_user": "User",
-                "sdt_user": rep.body.sdt_user,
-                "pass_user": rep.body.pass_user,
-                "linkuser": rep.body.sdt_user + "/url"
+                "sdt_user": phoneNumber,
+                "pass_user": passWord,
+                "linkuser": phoneNumber + "/url"
             }
             var newUser = await UserService.addUser(newDataUser);
+            // "id": 27,
+            // "name_user": "User",
+            // "sdt_user": "0982691479",
+            // "pass_user": "vanvan11",
+            // "linkuser": "0982691479/url"
+            var newDataUser = {
+                "id": newUser.id+"",
+                "name_user": "User",
+                "phonenumber": newUser.sdt_user,
+                "password": newUser.pass_user,
+                "linkuser": newUser.linkuser,
+            }
             if (newUser.sdt_user != null) {
                 res.send(JSON.stringify({
                     code: "1000",
                     message: 'OK',
-                    data: newUser
+                    data: newDataUser
                 }))
             }
         }
@@ -40,8 +54,8 @@ let sigup = async (rep, res) => {
     }
 }
 let login = async (rep, res) => {
-    var phoneNumber = rep.body.sdt_user;
-    var passWord = rep.body.pass_user;
+    var phoneNumber = rep.body.phonenumber;
+    var passWord = rep.body.password;
     if (phoneNumber == undefined || passWord == undefined) {
         Error.code1002(res);
     }
@@ -75,8 +89,8 @@ let login = async (rep, res) => {
                         }
                         res.send(JSON.stringify({
                             code: "1000",
-                            Message: 'ok',
-                            Data: userdata,
+                            message: 'ok',
+                            data: userdata,
                         }));
                     }
 
@@ -358,7 +372,7 @@ let setUserInfo = async (req, res) => {
                     message: "ok",
                     data: outPut,
                 }));
-            }else{
+            } else {
                 Error.code1005(res);
             }
         }
@@ -372,11 +386,10 @@ let getSaveSearch = async (req, res) => {
     var count = req.body.count;
     var token = req.body.token;
     var index = req.body.index;
-    if (count==undefined||token==undefined||index==undefined) {
+    if (count == undefined || token == undefined || index == undefined) {
         Error.code1002(res);
     }
-    else if(token==""||count==""||count<=index||index==""||index<0)
-    {
+    else if (token == "" || count == "" || count <= index || index == "" || index < 0) {
         Error.code1004(res);
     }
     else {
@@ -446,11 +459,10 @@ let getSuggestedListFriends = async (req, res) => {
     var count = req.body.count;
     var token = req.body.token;
     var index = req.body.index;
-    if (count==undefined||token==undefined||index==undefined) {
+    if (count == undefined || token == undefined || index == undefined) {
         Error.code1002(res);
     }
-    else if(count==""||count<=0||token==""||index==""||index<0||index>=count)
-    {
+    else if (count == "" || count <= 0 || token == "" || index == "" || index < 0 || index >= count) {
         Error.code1004(res);
     }
     else {
@@ -459,7 +471,7 @@ let getSuggestedListFriends = async (req, res) => {
 
             var getallFriendsOfFriend = await UserService.getallFriendsOfFriendUserLogin(userCheckToken.id_user);
 
-           // console.log(getallFriendsOfFriend);
+            // console.log(getallFriendsOfFriend);
             var allSameFriendUserlogin = [];
             for (let i = 0; i < getallFriendsOfFriend.length; i++) {
                 for (let j = 0; j < getallFriendsOfFriend[i].length; j++) {
@@ -474,8 +486,8 @@ let getSuggestedListFriends = async (req, res) => {
 
                 }
             }
-            var newCount=(allSameFriendUserlogin.length>count) ? count : allSameFriendUserlogin.length;
-            var newindex=(index>allSameFriendUserlogin.length)?0:index;
+            var newCount = (allSameFriendUserlogin.length > count) ? count : allSameFriendUserlogin.length;
+            var newindex = (index > allSameFriendUserlogin.length) ? 0 : index;
             var listFriendSuggesters = [];
             for (let i = newindex; i < newCount; i++) {
                 var getUserByid = await UserService.checkiduser(allSameFriendUserlogin[i].id_User);

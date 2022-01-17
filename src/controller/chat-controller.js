@@ -157,7 +157,7 @@ let getListConversation = async (req, res) => {
 let getconversation = async (req, res) => {
 
     var token = req.body.token;
-    var partnerId = req.body.partnerId;
+    var partnerId = req.body.partner_id;
     //var conversationId = req.body.conversation;
     var index = req.body.index;
     var count = req.body.count;
@@ -207,8 +207,8 @@ let getconversation = async (req, res) => {
 }
 let deletemessage = async (req, res) => {
     var token = req.body.token;
-    var partnerId = req.body.partnerId;
-    var messageId = req.body.messageId;
+    var partnerId = req.body.partner_id;
+    var messageId = req.body.message_id;
     if (token==undefined||partnerId==undefined||messageId == undefined) {
         Error.code1002(res);
     } 
@@ -264,7 +264,7 @@ let deletemessage = async (req, res) => {
 }
 let deleteConversation = async (req, res) => {
     var token = req.body.token;
-    var partnerId = req.body.partnerId;
+    var partnerId = req.body.partner_id;
 
     if (token==undefined||partnerId==undefined) {
         Error.code1002(res);
