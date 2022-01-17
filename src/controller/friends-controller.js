@@ -20,7 +20,7 @@ let getUserFrineds = async (req, res) => {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
             ///console.log(userCheckToken);
-            var getIdUser = (userId != undefined && userCheckToken.role == "2") ? userId : userCheckToken.id_user;
+            var getIdUser = (userId != undefined) ? userId : userCheckToken.id_user;
 
             var checkUserByid = await UserService.checkiduser(getIdUser);
             if (checkUserByid !== null) {
@@ -257,7 +257,7 @@ let getUserInfo = async (req, res) => {
     token = req.body.token;
     userId = req.body.userId;
 
-    if (token == undefined || userId == undefined) {
+    if (token == undefined) {
         Error.code1002(res);
     }
     else if (token == "" || userId == "" || userId <= 0) {
@@ -266,11 +266,11 @@ let getUserInfo = async (req, res) => {
     else {
         var userCheckToken = await UserService.checkUserByToken(token);
         if (userCheckToken !== null) {
+            var idUserGetInfor=(userId!= undefined)?userId:userCheckToken.id_user;
+            let data = await UserService.checkiduser(idUserGetInfor);
 
-            let data = await UserService.checkiduser(userId);
-  
             if (data != undefined) {
-                var friendOfUser = await friendService.getlistfriendsbyid(userId);
+                var friendOfUser = await friendService.getlistfriendsbyid(idUserGetInfor);
                 var isFriend = "0"
                 if (friendOfUser != null) {
                     for (let i = 0; i < friendOfUser.length; i++) {
